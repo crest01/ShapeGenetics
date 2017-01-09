@@ -16,10 +16,12 @@ The code has been tested on Arch Linux (with clang 3.5.2 or gcc 5.4) and Windows
 - OpenGL >= 4.3
 - libpng
 - zlib
+
 ## Build
 coming soon in more detail
 execute cmake and make in procrender/build/cmake
 Adapt some paths in the run/run.py - script
+
 ## Notes
 The gcc-version shipped with Arch Linux wasn't compatible with CUDA 8.0, and CUDA/OpenGL Interop was impossible due to my hardware setup, so i switched to the gcc deliverd with the CUDA package, and used ComputeShaders for some parts.
 
