@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="operators">
+      <UniqueIdentifier>{ee96cb27-af19-48d9-8d0a-9c95d19e54c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parameters">
+      <UniqueIdentifier>{a9bb728e-0388-4e49-bd1e-20633b634102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shapes">
+      <UniqueIdentifier>{5f7870e3-9ab9-4179-9008-38d5a4bdd96b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CPU">
+      <UniqueIdentifier>{d393d654-0df5-4a53-b763-dc25d3e0b63b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scope">
+      <UniqueIdentifier>{cd7dc9c5-fd28-4096-95f7-3ce510ab7e1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="modifiers">
+      <UniqueIdentifier>{5377b19d-7e01-4a3f-b5b2-347c55c127cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CPUDynamic">
+      <UniqueIdentifier>{b62f1d24-56c8-477d-a559-de81c96dc41b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\shapes\Platonics.h">
+      <Filter>shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\shapes\Polygon.h">
+      <Filter>shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\shapes\Prism.h">
+      <Filter>shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\shapes\Vertex.h">
+      <Filter>shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\DynamicParameter.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\ParameterTable.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\Random.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\StaticParameter.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\operators\ChangeShape.h">
+      <Filter>operators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\operators\ComponentSplit.h">
+      <Filter>operators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\operators\Extrude.h">
+      <Filter>operators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\operators\OperatorList.h">
+      <Filter>operators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\operators\RandomPath.h">
+      <Filter>operators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\operators\Repeat.h">
+      <Filter>operators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\operators\ScopeOperators.h">
+      <Filter>operators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\operators\Subdivide.h">
+      <Filter>operators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPU\Evaluator.h">
+      <Filter>CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPU\Queue.h">
+      <Filter>CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DualBuild.h" />
+    <ClInclude Include="..\..\src\shapes\Quad.h">
+      <Filter>shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\shapes\ShapeList.h">
+      <Filter>shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\shapes\ShapeTraits.h">
+      <Filter>shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\scope\ScopeAugmentation.h">
+      <Filter>scope</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\scope\Scope.h">
+      <Filter>scope</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\ParameterTraits.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\Axis.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\modifiers\DirectCall.h">
+      <Filter>modifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\modifiers\Discard.h">
+      <Filter>modifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\shapes\ShapeName.h">
+      <Filter>shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\operators\Resize.h">
+      <Filter>operators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\modifiers\Print.h">
+      <Filter>modifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ParameterPack.h" />
+    <ClInclude Include="..\..\src\parameters\CombinedParameter.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\MatrixTransformations.h" />
+    <ClInclude Include="..\..\src\CPU\Allocator.h">
+      <Filter>CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPU\DynamicCall.h">
+      <Filter>CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPU\StaticCall.h">
+      <Filter>CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPU\GrammarSystem.h">
+      <Filter>CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPU\ParameterStorage.h">
+      <Filter>CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPUDynamic\DynamicScope.h">
+      <Filter>CPUDynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPUDynamic\SupportedOpertors.h">
+      <Filter>CPUDynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPUDynamic\SupportedShapes.h">
+      <Filter>CPUDynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPUDynamic\DynamicFunctiontable.h">
+      <Filter>CPUDynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\modifiers\ScopeModifier.h">
+      <Filter>modifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPUDynamic\Generate.h">
+      <Filter>CPUDynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\operators\Generator.h">
+      <Filter>operators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPU\SharedBuffer.h">
+      <Filter>CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CPUDynamic\BufferGenerator.h">
+      <Filter>CPUDynamic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\ParameterConversion.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\StaticRandom.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\VectorParameters.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\modifiers\RandomReseed.h">
+      <Filter>modifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\ScopeParameter.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\operators\Duplicate.h">
+      <Filter>operators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\ShapeParameter.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parameters\ParameterOperations.h">
+      <Filter>parameters</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\parameters\ParameterTable.impl">
+      <Filter>parameters</Filter>
+    </None>
+    <None Include="..\..\src\operators\ChangeShape.impl">
+      <Filter>operators</Filter>
+    </None>
+    <None Include="..\..\src\operators\ComponentSplit.impl">
+      <Filter>operators</Filter>
+    </None>
+    <None Include="..\..\src\operators\Extrude.impl">
+      <Filter>operators</Filter>
+    </None>
+    <None Include="..\..\src\operators\RandomPath.impl">
+      <Filter>operators</Filter>
+    </None>
+    <None Include="..\..\src\operators\Repeat.impl">
+      <Filter>operators</Filter>
+    </None>
+    <None Include="..\..\src\operators\ScopeOperators.impl">
+      <Filter>operators</Filter>
+    </None>
+    <None Include="..\..\src\operators\Subdivide.impl">
+      <Filter>operators</Filter>
+    </None>
+    <None Include="..\..\src\operators\Resize.impl">
+      <Filter>operators</Filter>
+    </None>
+    <None Include="..\..\src\operators\Generator.impl">
+      <Filter>operators</Filter>
+    </None>
+    <None Include="..\..\src\operators\Duplicate.impl">
+      <Filter>operators</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\test.cpp" />
+    <ClCompile Include="..\..\src\CPU\Allocator.cpp">
+      <Filter>CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPU\Evaluator.cpp">
+      <Filter>CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPU\ParameterStorage.cpp">
+      <Filter>CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPUDynamic\ChangeShape.cpp">
+      <Filter>CPUDynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPUDynamic\ComponentSplit.cpp">
+      <Filter>CPUDynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPUDynamic\Extrude.cpp">
+      <Filter>CPUDynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPUDynamic\Repeat.cpp">
+      <Filter>CPUDynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPUDynamic\Resize.cpp">
+      <Filter>CPUDynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPUDynamic\ScopeOperations.cpp">
+      <Filter>CPUDynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPUDynamic\Subdivide.cpp">
+      <Filter>CPUDynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPUDynamic\DynamicFunctiontable.cpp">
+      <Filter>CPUDynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPUDynamic\Generate.cpp">
+      <Filter>CPUDynamic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CPUDynamic\BufferGenerator.cpp">
+      <Filter>CPUDynamic</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

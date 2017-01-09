@@ -1,0 +1,115 @@
+
+#ifndef INCLUDED_OPERATORS_CHANGE_SHAPE_IMPL
+#define INCLUDED_OPERATORS_CHANGE_SHAPE_IMPL
+
+#pragma once
+
+#include "ChangeShape.h"
+
+#include <template_utils.h>
+#include "ParameterPack.h"
+#include "CombinedParameter.h"
+
+namespace PGG
+{
+	namespace Operators
+	{
+
+		namespace
+		{
+			template <class InShape, class TScope, class OutShape, class Next, bool sizeBased, bool enable = false>
+			struct ChangeShapeImpl;
+
+
+			template <class InShape, class TScope, class OutShape, class Next, int SizeDim, int CtorDim>
+			struct ChangeShapeImplSize;
+			
+			template <class InShape, class TScope, class OutShape, class Next, int EqualSize>
+			struct ChangeShapeImplSize<InShape, TScope, OutShape, Next, EqualSize, EqualSize>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape<OutShape, TScope> newShape(OutShape(scopedShape.shape.size), scopedShape.scope);
+					Next::apply(newShape);
+				}
+			};
+
+			template <class InShape, class TScope, class OutShape, class Next>
+			struct ChangeShapeImplSize<InShape, TScope, OutShape, Next, 3, 1>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					float newSize = (scopedShape.shape.size.x + scopedShape.shape.size.y + scopedShape.shape.size.z) / 3.0f;
+					Scope::ScopedShape<OutShape, TScope> newShape(OutShape(newSize), scopedShape.scope);
+					Next::apply(newShape);
+				}
+			};
+
+			template <class InShape, class TScope, class OutShape, class Next>
+			struct ChangeShapeImplSize<InShape, TScope, OutShape, Next, 1, 3>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape<OutShape, TScope> newShape(OutShape(math::float3(scopedShape.shape.size)), scopedShape.scope);
+					Next::apply(newShape);
+				}
+			};
+
+
+			template <class InShape, class TScope, class OutShape, class Next>
+			struct ChangeShapeImpl <InShape, TScope, OutShape, Next, true, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					ChangeShapeImplSize<InShape, TScope, OutShape, Next, Shapes::Traits::HasSizeVector<InShape>::value, Shapes::Traits::ConstructByVector<OutShape>::value>
+						::apply(scopedShape);
+				}
+			};
+		}
+
+
+		template<class Next, class OutShape>
+		struct ChangeShape<OutShape, Next>
+		{
+			template <class InShape, class TScope>
+			DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+			{
+				ChangeShapeImpl<InShape, TScope, OutShape, Next,
+					(Shapes::Traits::HasSizeVector<InShape>::value > 0 && Shapes::Traits::ConstructByVector<OutShape>::value > 0),
+					Shapes::Traits::Dimensions<InShape>::value == Shapes::Traits::Dimensions<OutShape>::value
+				>
+				::apply(scopedShape);
+			}
+		};
+
+		template<class OutShape, class Next, class ... ShapeCtorParams>
+		struct ChangeShape<OutShape, Parameters::CombinedParameter<ShapeCtorParams...>, Next>
+		{
+			template <class InShape, class TScope>
+			DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+			{
+				// extract params and call ctor
+				Scope::ScopedShape<InShape, TScope> inShapeState(scopedShape);
+				OutShape outShape((ShapeCtorParams::eval(inShapeState))...);
+				Scope::ScopedShape<OutShape, TScope> newShape(outShape, inShapeState.scope);
+				Next::apply(newShape);
+			}
+		};
+
+		template<class OutShape, class Parameter, class Next>
+		struct ChangeShape<OutShape, Parameter, Next>
+		{
+			template <class InShape, class TScope>
+			DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+			{
+				Scope::ScopedShape<InShape, TScope> inShapeState(scopedShape);
+				OutShape outShape(Parameter::eval(inShapeState));
+				Scope::ScopedShape<OutShape, TScope> newShape(outShape, inShapeState.scope);
+				Next::apply(newShape);
+			}
+		};
+
+	}
+}
+
+#endif // INCLUDED_OPERATORS_CHANGE_SHAPE_IMPL

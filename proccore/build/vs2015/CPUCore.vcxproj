@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\CPUDynamic\BufferGenerator.h" />
+    <ClInclude Include="..\..\src\CPUDynamic\DynamicFunctiontable.h" />
+    <ClInclude Include="..\..\src\CPUDynamic\DynamicScope.h" />
+    <ClInclude Include="..\..\src\CPUDynamic\Generate.h" />
+    <ClInclude Include="..\..\src\CPUDynamic\SupportedOpertors.h" />
+    <ClInclude Include="..\..\src\CPUDynamic\SupportedShapes.h" />
+    <ClInclude Include="..\..\src\CPU\Allocator.h" />
+    <ClInclude Include="..\..\src\CPU\DynamicCall.h" />
+    <ClInclude Include="..\..\src\CPU\Evaluator.h" />
+    <ClInclude Include="..\..\src\CPU\GrammarSystem.h" />
+    <ClInclude Include="..\..\src\CPU\ParameterStorage.h" />
+    <ClInclude Include="..\..\src\CPU\Queue.h" />
+    <ClInclude Include="..\..\src\CPU\SharedBuffer.h" />
+    <ClInclude Include="..\..\src\CPU\StaticCall.h" />
+    <ClInclude Include="..\..\src\DualBuild.h" />
+    <ClInclude Include="..\..\src\MatrixTransformations.h" />
+    <ClInclude Include="..\..\src\modifiers\DirectCall.h" />
+    <ClInclude Include="..\..\src\modifiers\Discard.h" />
+    <ClInclude Include="..\..\src\modifiers\Print.h" />
+    <ClInclude Include="..\..\src\modifiers\RandomReseed.h" />
+    <ClInclude Include="..\..\src\modifiers\ScopeModifier.h" />
+    <ClInclude Include="..\..\src\operators\ChangeShape.h" />
+    <ClInclude Include="..\..\src\operators\ComponentSplit.h" />
+    <ClInclude Include="..\..\src\operators\Duplicate.h" />
+    <ClInclude Include="..\..\src\operators\Extrude.h" />
+    <ClInclude Include="..\..\src\operators\Generator.h" />
+    <ClInclude Include="..\..\src\operators\OperatorList.h" />
+    <ClInclude Include="..\..\src\operators\RandomPath.h" />
+    <ClInclude Include="..\..\src\operators\Repeat.h" />
+    <ClInclude Include="..\..\src\operators\Resize.h" />
+    <ClInclude Include="..\..\src\operators\ScopeOperators.h" />
+    <ClInclude Include="..\..\src\operators\Subdivide.h" />
+    <ClInclude Include="..\..\src\ParameterPack.h" />
+    <ClInclude Include="..\..\src\parameters\Axis.h" />
+    <ClInclude Include="..\..\src\parameters\CombinedParameter.h" />
+    <ClInclude Include="..\..\src\parameters\DynamicParameter.h" />
+    <ClInclude Include="..\..\src\parameters\ParameterConversion.h" />
+    <ClInclude Include="..\..\src\parameters\ParameterOperations.h" />
+    <ClInclude Include="..\..\src\parameters\ParameterTable.h" />
+    <ClInclude Include="..\..\src\parameters\ParameterTraits.h" />
+    <ClInclude Include="..\..\src\parameters\Random.h" />
+    <ClInclude Include="..\..\src\parameters\ScopeParameter.h" />
+    <ClInclude Include="..\..\src\parameters\ShapeParameter.h" />
+    <ClInclude Include="..\..\src\parameters\StaticParameter.h" />
+    <ClInclude Include="..\..\src\parameters\StaticRandom.h" />
+    <ClInclude Include="..\..\src\parameters\VectorParameters.h" />
+    <ClInclude Include="..\..\src\scope\Scope.h" />
+    <ClInclude Include="..\..\src\scope\ScopeAugmentation.h" />
+    <ClInclude Include="..\..\src\shapes\Platonics.h" />
+    <ClInclude Include="..\..\src\shapes\Polygon.h" />
+    <ClInclude Include="..\..\src\shapes\Prism.h" />
+    <ClInclude Include="..\..\src\shapes\Quad.h" />
+    <ClInclude Include="..\..\src\shapes\ShapeList.h" />
+    <ClInclude Include="..\..\src\shapes\ShapeName.h" />
+    <ClInclude Include="..\..\src\shapes\ShapeTraits.h" />
+    <ClInclude Include="..\..\src\shapes\Vertex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\operators\ChangeShape.impl" />
+    <None Include="..\..\src\operators\ComponentSplit.impl" />
+    <None Include="..\..\src\operators\Duplicate.impl" />
+    <None Include="..\..\src\operators\Extrude.impl" />
+    <None Include="..\..\src\operators\Generator.impl" />
+    <None Include="..\..\src\operators\RandomPath.impl" />
+    <None Include="..\..\src\operators\Repeat.impl" />
+    <None Include="..\..\src\operators\Resize.impl" />
+    <None Include="..\..\src\operators\ScopeOperators.impl" />
+    <None Include="..\..\src\operators\Subdivide.impl" />
+    <None Include="..\..\src\parameters\ParameterTable.impl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\CPUDynamic\BufferGenerator.cpp" />
+    <ClCompile Include="..\..\src\CPUDynamic\ChangeShape.cpp" />
+    <ClCompile Include="..\..\src\CPUDynamic\ComponentSplit.cpp" />
+    <ClCompile Include="..\..\src\CPUDynamic\DynamicFunctiontable.cpp" />
+    <ClCompile Include="..\..\src\CPUDynamic\Extrude.cpp" />
+    <ClCompile Include="..\..\src\CPUDynamic\Generate.cpp" />
+    <ClCompile Include="..\..\src\CPUDynamic\Repeat.cpp" />
+    <ClCompile Include="..\..\src\CPUDynamic\Resize.cpp" />
+    <ClCompile Include="..\..\src\CPUDynamic\ScopeOperations.cpp" />
+    <ClCompile Include="..\..\src\CPUDynamic\Subdivide.cpp" />
+    <ClCompile Include="..\..\src\CPU\Allocator.cpp" />
+    <ClCompile Include="..\..\src\CPU\Evaluator.cpp" />
+    <ClCompile Include="..\..\src\CPU\ParameterStorage.cpp" />
+    <ClCompile Include="..\..\src\test.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{36194DDA-2CF2-4E61-8F28-7F69A1BDCD27}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>CPUCore</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>../dependencies/utils;../../src;../../src/shapes;../../src/operators;../../src/scope;../../src/parameters;../../src/modifiers;../../src/CPU;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>../dependencies/utils;../../src;../../src/shapes;../../src/operators;../../src/scope;../../src/parameters;../../src/modifiers;../../src/CPU;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>LEFTHANDED;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetFileName)" "$(ProjectDir)$(TargetName)D$(TargetExt)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>LEFTHANDED;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetFileName)" "$(ProjectDir)$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

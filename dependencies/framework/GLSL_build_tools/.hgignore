@@ -1,0 +1,12 @@
+syntax: glob
+*.exe
+*.dll
+*.lib
+*.obj
+*.pdb
+*.idb
+*.tlog
+*.log
+*.suo
+*.sdf
+*.opensdf

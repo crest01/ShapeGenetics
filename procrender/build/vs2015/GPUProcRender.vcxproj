@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{87FCAD2D-E63D-4ADB-8052-1982E70CEDA4}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GPUProcRender</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup>
+    <Import Project="..\..\dependencies\framework\dependencies.props" />
+    <Import Project="$(Win32CoreToolsRoot)build\vs2015\Win32_core_tools.props" />
+    <Import Project="$(GLPlatformToolsRoot)build\vs2015\GL_platform_tools.props" />
+    <Import Project="$(GLCoreToolsRoot)build\vs2015\GL_core_tools.props" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(GLSLBuildToolsRoot)GLSL.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\..\dependencies\framework;..\..\..\gpuproccore\build\dependencies\utils;..\..\..\gpuproccore\src;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>..\..\dependencies\framework;..\..\..\gpuproccore\build\dependencies\utils;..\..\..\gpuproccore\src;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>LEFTHANDED;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Win32_core_tools-MDd.lib;glcore-MDd.lib;GL_platform_tools-glcore-MDd.lib;GL_core_tools-glcore-MDd.lib;opengl32.lib;CPUCoreD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../../gpuproccore/build/vs2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>LEFTHANDED;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Win32_core_tools-MD.lib;glcore-MD.lib;GL_platform_tools-glcore-MD.lib;GL_core_tools-glcore-MD.lib;opengl32.lib;CPUCore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../../gpuproccore/build/vs2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\Config.cpp" />
+    <ClCompile Include="..\..\src\ConfigParser.cpp" />
+    <ClCompile Include="..\..\src\ConfigStream.cpp" />
+    <ClCompile Include="..\..\src\ConsoleHandler.cpp" />
+    <ClCompile Include="..\..\src\Display.cpp" />
+    <ClCompile Include="..\..\src\ExperimentationScene.cpp" />
+    <ClCompile Include="..\..\src\FirstPersonNavigator.cpp" />
+    <ClCompile Include="..\..\src\GeometryData.cpp" />
+    <ClCompile Include="..\..\src\InputHandler.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\OrbitalNavigator.cpp" />
+    <ClCompile Include="..\..\src\PerspectiveCamera.cpp" />
+    <ClCompile Include="..\..\src\Renderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\Camera.h" />
+    <ClInclude Include="..\..\src\Config.h" />
+    <ClInclude Include="..\..\src\ConfigParser.h" />
+    <ClInclude Include="..\..\src\ConfigStream.h" />
+    <ClInclude Include="..\..\src\ConsoleHandler.h" />
+    <ClInclude Include="..\..\src\Display.h" />
+    <ClInclude Include="..\..\src\ExperimentationScene.h" />
+    <ClInclude Include="..\..\src\FirstPersonNavigator.h" />
+    <ClInclude Include="..\..\src\GeometryData.h" />
+    <ClInclude Include="..\..\src\InputHandler.h" />
+    <ClInclude Include="..\..\src\io.h" />
+    <ClInclude Include="..\..\src\Navigator.h" />
+    <ClInclude Include="..\..\src\OrbitalNavigator.h" />
+    <ClInclude Include="..\..\src\PerspectiveCamera.h" />
+    <ClInclude Include="..\..\src\Renderer.h" />
+    <ClInclude Include="..\..\src\Scene.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\shaders\camera" />
+    <GLSL Include="..\..\src\shaders\lambert.fs.glsl">
+      <FileType>Document</FileType>
+    </GLSL>
+    <GLSL Include="..\..\src\shaders\passthrough.vs.glsl">
+      <FileType>Document</FileType>
+    </GLSL>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(GLSLBuildToolsRoot)GLSL.targets" />
+  </ImportGroup>
+</Project>

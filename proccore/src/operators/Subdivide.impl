@@ -1,0 +1,273 @@
+#ifndef INCLUDED_OPERATORS_SUBDIVIDE_IMPLEMENTAION
+#define INCLUDED_OPERATORS_SUBDIVIDE_IMPLEMENTAION
+
+#pragma once
+
+
+#include "Subdivide.h"
+#include "parameters/Axis.h"
+#include <tuple>
+
+namespace PGG
+{
+	namespace Operators
+	{
+		namespace
+		{
+			template<class Shape, class TAxis, bool heightbased>
+			struct SizeAccessStaticImpl
+			{
+				DUAL_BUILD_FUNCTION static float& access(Shape& shape) { return Parameters::accessVec<TAxis::Axis, decltype(shape.size)>(shape.size); }
+				DUAL_BUILD_FUNCTION static float access(const Shape& shape) { return Parameters::accessVec<TAxis::Axis, decltype(shape.size)>(shape.size); }
+			};
+			template<class Shape, class TAxis>
+			struct SizeAccessStaticImpl<Shape, TAxis, true>
+			{
+				DUAL_BUILD_FUNCTION static float& access(Shape& shape) { return shape.height; }
+				DUAL_BUILD_FUNCTION static float access(const Shape& shape) { return shape.height; }
+			};
+			template<class Shape, class TAxis>
+			struct SizeAccessStatic
+			{
+				DUAL_BUILD_FUNCTION static float& access(Shape& shape) { return SizeAccessStaticImpl<Shape, TAxis, Shapes::has_height<Shape>::value>::access(shape); }
+				DUAL_BUILD_FUNCTION static float access(const Shape& shape) { return SizeAccessStaticImpl<Shape, TAxis, Shapes::has_height<Shape>::value>::access(shape); }
+			};
+
+			template<class Shape, bool heightbased>
+			struct SizeAccessDynamicImpl
+			{
+				typedef decltype(Shape::size) SizeMaskClass;
+				DUAL_BUILD_FUNCTION static float& access(Shape& shape, Parameters::Axes axis) { return Parameters::dynAccessVec(axis, shape.size); }
+				DUAL_BUILD_FUNCTION static float access(const Shape& shape, Parameters::Axes axis) { return Parameters::dynAccessVec(axis, shape.size); }
+				DUAL_BUILD_FUNCTION static SizeMaskClass& access(Shape& shape) { return shape.size; }
+				DUAL_BUILD_FUNCTION static SizeMaskClass access(const Shape& shape) { return shape.size; }
+				DUAL_BUILD_FUNCTION static SizeMaskClass sizemask(Parameters::Axes axis) { return Parameters::DynSubAccess<SizeMaskClass>::mask(axis); }
+			};
+			template<class Shape>
+			struct SizeAccessDynamicImpl<Shape, true>
+			{
+				typedef float SizeMaskClass;
+				DUAL_BUILD_FUNCTION static float& access(Shape& shape, Parameters::Axes axis) { return shape.height; }
+				DUAL_BUILD_FUNCTION static float access(const Shape& shape, Parameters::Axes axis) { return shape.height; }
+				DUAL_BUILD_FUNCTION static SizeMaskClass& access(Shape& shape) { return shape.height; }
+				DUAL_BUILD_FUNCTION static SizeMaskClass access(const Shape& shape) { return shape.height; }
+				DUAL_BUILD_FUNCTION static SizeMaskClass sizemask(Parameters::Axes axis) { return 1.0f; }
+			};
+			template<class Shape>
+			struct SizeAccessDynamic
+			{
+				typedef typename SizeAccessDynamicImpl<Shape, Shapes::has_height<Shape>::value>::SizeMaskClass SizeMaskClass;
+				DUAL_BUILD_FUNCTION static float& access(Shape& shape, Parameters::Axes axis) { return SizeAccessDynamicImpl<Shape, Shapes::has_height<Shape>::value>::access(shape, axis); }
+				DUAL_BUILD_FUNCTION static float access(const Shape& shape, Parameters::Axes axis) { return SizeAccessDynamicImpl<Shape, Shapes::has_height<Shape>::value>::access(shape, axis); }
+				DUAL_BUILD_FUNCTION static SizeMaskClass sizemask(Parameters::Axes axis) { return SizeAccessDynamicImpl<Shape, Shapes::has_height<Shape>::value>::sizemask(axis); }
+			};
+
+			template<class InShape, class TScope, class ... Pairs>
+			struct SubdivSizeCalculator;
+
+			template<class InShape, class TScope, class FloatParamA, class NextA, class ... Remaining>
+			struct SubdivSizeCalculator<InShape, TScope, FloatParamA, NextA, Remaining...>
+			{
+				DUAL_BUILD_FUNCTION static
+				typename enable_if<
+				type_equals<decltype(FloatParamA::eval(declval<Scope::ScopedShape<InShape, TScope>&>())), float>::value,
+				//type_equals<decltype(FloatParamA::eval(declval<Scope::ScopedShape<InShape, TScope>>())), float>::value,
+				std::tuple<float, float> > ::type
+				computeSizes(Scope::ScopedShape<InShape, TScope> scopedShape)
+				{
+					float param = FloatParamA::eval(scopedShape);
+					std::tuple<float, float> absRel = SubdivSizeCalculator<InShape, TScope, Remaining...>::computeSizes(scopedShape);
+					std::get<0>(absRel) += param > 0.0f ? param : 0.0f;
+					std::get<1>(absRel) += param < 0.0f ? -param : 0.0f;
+					return absRel;
+				}
+			};
+			template<class InShape, class TScope>
+			struct SubdivSizeCalculator<InShape, TScope>
+			{
+				DUAL_BUILD_FUNCTION static
+				std::tuple<float, float> computeSizes(const Scope::ScopedShape<InShape, TScope>& scopedShape)
+				{
+					return std::tuple<float, float>(0.0f, 0.0f);
+				}
+			};
+
+			template<class InShape, class TScope, class TAxis, class ... Pairs>
+			struct SubdivApplierStaticAxis;
+			template<class InShape, class TScope, class TAxis, class FloatParamA, class NextA, class ... Remaining>
+			struct SubdivApplierStaticAxis<InShape, TScope, TAxis, FloatParamA, NextA, Remaining...>
+			{
+				DUAL_BUILD_FUNCTION 
+				static void applyRec(Scope::ScopedShape<InShape, TScope>& inScopedShape, float size, float relAvailable, float relSumInverse, float usedup = 0.0f, int num = 0)
+				{
+					float param = FloatParamA::eval(inScopedShape);
+					float tsize = param >= 0.0f ? param : -param*relSumInverse*relAvailable;
+					//only continue if this part fits in
+					if (usedup + tsize < size + 4.0f*size*std::numeric_limits<float>::epsilon())
+					{
+						if (tsize > 0.0f)
+						{
+							Scope::ScopedShape<InShape, TScope> newShape(inScopedShape);
+							SizeAccessStatic<InShape, TAxis>::access(newShape.shape) = tsize;
+							math::float3 translation = (0.5f*(tsize - size) + usedup) * Parameters::SubAccess<TAxis::Axis, math::float3>::mask();
+							newShape.scope.translateShape(translation);
+							NextA::apply(newShape, num);
+						}
+						SubdivApplierStaticAxis<InShape, TScope, TAxis, Remaining...> ::applyRec(inScopedShape, size, relAvailable, relSumInverse, usedup + tsize, num + 1);
+					}
+				}
+				DUAL_BUILD_FUNCTION
+				static void startRec(Scope::ScopedShape<InShape, TScope>& inScopedShape, float absSum, float relSum)
+				{
+					float size = SizeAccessStatic<InShape, TAxis>::access(inScopedShape.shape);
+					float relAvailable = math::max(0.0f, size - absSum);
+					float relSumInverse = 1.0f / relSum;
+					applyRec(inScopedShape, size, relAvailable, relSumInverse);
+				}
+
+			};
+			template<class InShape, class TScope, class TAxis>
+			struct SubdivApplierStaticAxis<InShape, TScope, TAxis>
+			{
+				DUAL_BUILD_FUNCTION 
+				static void applyRec(Scope::ScopedShape<InShape, TScope>& inScopedShape, float size, float relAvailable, float relSumInverse, float usedup, int num)
+				{ }
+			};
+
+			template<class InShape, class TScope, class TAxis, class ... Pairs>
+			struct SubdivApplierDynAxis;
+			template<class InShape, class TScope, class TAxis, class FloatParamA, class NextA, class ... Remaining>
+			struct SubdivApplierDynAxis<InShape, TScope, TAxis, FloatParamA, NextA, Remaining...>
+			{
+				typedef typename SizeAccessDynamic<InShape>::SizeMaskClass SizeMaskClass;
+
+				DUAL_BUILD_FUNCTION 
+				static void applyRec(Scope::ScopedShape<InShape, TScope>& inScopedShape, float size, float relAvailable, float relSumInverse, math::float3 axisMask, SizeMaskClass sizeMask, float usedup = 0.0f, int num = 0)
+				{
+					float param = FloatParamA::eval(inScopedShape);
+					float tsize = param >= 0.0f ? param : -param*relSumInverse*relAvailable;
+					//only continue if this part fits in
+					if (usedup + tsize < size + 4.0f*size*std::numeric_limits<float>::epsilon())
+					{
+						if (tsize > 0.0f)
+						{
+							Scope::ScopedShape<InShape, TScope> newShape(inScopedShape);
+							SizeAccessDynamic<InShape>::access(inScopedShape.shape) = SizeAccessDynamic<InShape>::access(inScopedShape.shape) + sizeMask*(tsize - size);
+							math::float3 translation = (0.5f*(tsize - size) + usedup) * axisMask;
+							newShape.scope.translateShape(translation);
+							NextA::apply(newShape, num);
+						}
+						SubdivApplierDynAxis<InShape, TScope, TAxis, Remaining...> ::applyRec(inScopedShape, size, relAvailable, relSumInverse, axisMask, sizeMask, usedup + tsize, num + 1);
+					}
+				}
+
+				DUAL_BUILD_FUNCTION
+				static void startRec(Scope::ScopedShape<InShape, TScope>& inScopedShape, float absSum, float relSum)
+				{
+					Parameters::Axes axis = TAxis::eval(inScopedShape);
+					//TODO: should we add a runtime check for axis being available?
+					float size = SizeAccessDynamic<InShape>::access(inScopedShape.shape, axis);
+					SizeMaskClass sizeMask = SizeAccessDynamic<InShape>::sizemask(axis);
+					math::float3 axisMask = Parameters::DynSubAccess<math::float3>::mask(axis);
+
+					float relAvailable = math::max(0.0f, size - absSum);
+					float relSumInverse = 1.0f / relSum;
+					applyRec(inScopedShape, size, relAvailable, relSumInverse, axisMask, sizeMask);
+				}
+
+			};
+			template<class InShape, class TScope, class TAxis>
+			struct SubdivApplierDynAxis<InShape, TScope, TAxis>
+			{
+				DUAL_BUILD_FUNCTION
+				static void applyRec(const Scope::ScopedShape<InShape, TScope>& inScopedShape, float size, float relAvailable, float relSumInverse, float usedup, int num)
+				{ }
+			};
+
+			template<class InShape, class TScope, class TAxis, bool staticaxis, bool enable, class ... ParamPairs>
+			struct SubdivImpl;
+
+			template<class InShape, class TScope, class TAxis, class ... ParamPairs>
+			struct SubdivImpl<InShape, TScope, TAxis, true, true, ParamPairs...>
+			{
+				DUAL_BUILD_FUNCTION static void apply(Scope::ScopedShape<InShape, TScope> scopedShape)
+				{
+					static_assert(Shapes::Traits::HasSizeVector<InShape>::value >= Parameters::toInt<TAxis::Axis>::value, "Axis not available in Shape");
+					Scope::ScopedShape<InShape, TScope> scopedShapeCpy(scopedShape);
+					auto absRel = SubdivSizeCalculator<InShape, TScope, ParamPairs...>::computeSizes(scopedShapeCpy);
+					//auto absRel = SubdivSizeCalculator<InShape, TScope, ParamPairs...>::computeSizes(scopedShape);
+					SubdivApplierStaticAxis<InShape, TScope, TAxis, ParamPairs...>::startRec(scopedShape, std::get<0>(absRel), std::get<1>(absRel));
+				}
+			};
+
+			template<class InShape, class TScope, class TAxis, class ... ParamPairs>
+			struct SubdivImpl<InShape, TScope, TAxis, false, true, ParamPairs...>
+			{
+				DUAL_BUILD_FUNCTION static void apply(Scope::ScopedShape<InShape, TScope> scopedShape)
+				{
+					Scope::ScopedShape<InShape, TScope> scopedShapeCpy(scopedShape);
+					auto absRel = SubdivSizeCalculator<InShape, TScope, ParamPairs...>::computeSizes(scopedShapeCpy);
+					//auto absRel = SubdivSizeCalculator<InShape, TScope, ParamPairs...>::computeSizes(scopedShape);
+					SubdivApplierDynAxis<InShape, TScope, TAxis, ParamPairs...>::startRec(scopedShape, std::get<0>(absRel), std::get<1>(absRel));
+				}
+			};
+
+			template<class InShape, class TScope, class TAxis, class AbsSumParam, class RelSumParam, bool staticaxis, bool enable, class ... ParamPairs>
+			struct SubdivImplPrecomputed;
+
+			template<class InShape, class TScope, class TAxis, class AbsSumParam, class RelSumParam, class ... ParamPairs>
+			struct SubdivImplPrecomputed<InShape, TScope, TAxis, AbsSumParam, RelSumParam, true, true, ParamPairs...>
+			{
+				DUAL_BUILD_FUNCTION static void apply(Scope::ScopedShape<InShape, TScope> scopedShape)
+				{
+					static_assert(Shapes::Traits::HasSizeVector<InShape>::value >= Parameters::toInt<TAxis::Axis>::value, "Axis not available in Shape");
+					float absSum = AbsSumParam::eval(scopedShape);
+					float relSum = RelSumParam::eval(scopedShape);
+					SubdivApplierStaticAxis<InShape, TScope, TAxis, ParamPairs...>::startRec(scopedShape, absSum, relSum);
+				}
+			};
+
+			template<class InShape, class TScope, class TAxis, class AbsSumParam, class RelSumParam, class ... ParamPairs>
+			struct SubdivImplPrecomputed<InShape, TScope, TAxis, AbsSumParam, RelSumParam, false, true, ParamPairs...>
+			{
+				DUAL_BUILD_FUNCTION static void apply(Scope::ScopedShape<InShape, TScope> scopedShape)
+				{
+					float absSum = AbsSumParam::eval(scopedShape);
+					float relSum = RelSumParam::eval(scopedShape);
+					SubdivApplierDynAxis<InShape, TScope, TAxis, ParamPairs...>::startRec(scopedShape, absSum, relSum);
+				}
+			};
+		}
+		
+
+		template<class TAxis, class ... ParamPairs>
+		template <class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void Subdiv<TAxis, ParamPairs...>::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			SubdivImpl<InShape, TScope, TAxis,
+				Parameters::has_static_axis<TAxis>::value,
+				type_equals<decltype(TAxis::eval(declval<Scope::ScopedShape<InShape, TScope>>())), Parameters::Axes>::value &&
+				(Shapes::Traits::HasSizeVector<InShape>::value > 0),
+				ParamPairs...
+			> ::apply(scopedShape);
+		}
+
+		template<class TAxis, class AbsSumParam, class RelSumParam, class ... ParamPairs>
+		template <class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void SubdivPrecomputed<TAxis, AbsSumParam, RelSumParam, ParamPairs...>::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+
+			SubdivImplPrecomputed<InShape, TScope, TAxis, AbsSumParam, RelSumParam,
+				Parameters::has_static_axis<TAxis>::value,
+				true,
+				//type_equals<decltype(TAxis::eval(declval<Scope::ScopedShape<InShape, TScope>>())), Parameters::Axes>::value &&
+				//type_equals<decltype(AbsSumParam::eval(declval<Scope::ScopedShape<InShape, TScope>>())), float>::value &&
+				//type_equals<decltype(RelSumParam::eval(declval<Scope::ScopedShape<InShape, TScope>>())), float>::value &&
+				//(Shapes::Traits::HasSizeVector<InShape>::value > 0),
+				ParamPairs...
+			> ::apply(scopedShape);
+		}
+	}
+}
+
+#endif

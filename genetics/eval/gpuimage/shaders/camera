@@ -1,0 +1,19 @@
+
+
+struct Camera
+{
+  mat4x4 view;
+  mat4x4 view_I;
+  mat4x4 projection;
+  mat4x4 projection_I;
+  mat4x4 VP;
+  mat4x4 VP_I;
+  vec3 position;
+};
+
+layout(std140, row_major, binding = 0) uniform CameraParameters
+{
+  Camera camera;
+};
+
+

@@ -1,0 +1,58 @@
+#ifndef INCLUDED_OPERATORS_DUPLICATE_IMPLEMENTAION
+#define INCLUDED_OPERATORS_DUPLICATE_IMPLEMENTAION
+
+#pragma once
+
+#include "Duplicate.h"
+
+namespace PGG
+{
+	namespace Shapes
+	{
+		template<int>
+		struct StaticPrism;
+
+		template<int>
+		struct DynamicPrism;
+	}
+}
+
+namespace PGG
+{
+	namespace Operators
+	{
+		namespace
+		{
+			template <class InShape, class TScope, class ... AllNext>
+			struct DuplicateImpl;
+
+			template <class InShape, class TScope, class Next, class ... AllNext>
+			struct DuplicateImpl<InShape, TScope, Next, AllNext...>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape, int i = 0)
+				{
+					Next::apply(scopedShape, i);
+					DuplicateImpl<InShape, TScope, AllNext...>::apply(scopedShape, i+1);
+				}
+			};
+
+			template <class InShape, class TScope>
+			struct DuplicateImpl<InShape, TScope>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape, int i = 0)
+				{
+				}
+			};
+		}
+
+		template<class ... AllNext>
+		template <class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void Duplicate<AllNext...>::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			DuplicateImpl<InShape, TScope, AllNext...>::apply(scopedShape);
+		}
+
+	}
+}
+
+#endif

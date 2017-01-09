@@ -1,0 +1,48 @@
+#ifndef INCLUDED_OPERATORS_EXTRUDE_IMPLEMENTATION
+#define INCLUDED_OPERATORS_EXTRUDE_IMPLEMENTATION
+
+#pragma once
+
+
+#include "Extrude.h"
+
+#include "shapes/Platonics.h"
+#include "shapes/Quad.h"
+#include "MatrixTransformations.h"
+
+namespace PGG
+{
+	namespace Operators
+	{
+
+		namespace {
+			template<class InShape, class TScope, class Param, class Next, bool enable = false>
+			struct ExtrudeImpl;
+
+			template<class TScope, class Param, class Next>
+			struct ExtrudeImpl<Shapes::Quad, TScope, Param, Next, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<Shapes::Quad, TScope> & quad)
+				{
+					Scope::ScopedShape<Shapes::Quad, TScope> inShapeState(quad);
+					float extsize = Param::eval(inShapeState);
+					Scope::ScopedShape<Shapes::Box, TScope> resBox(Shapes::Box(math::float3(inShapeState.shape.size, math::abs(extsize))), inShapeState.scope);
+					resBox.scope.translateShape(math::float3(0, 0, 0.5f*extsize));
+					Next::apply(resBox);
+				}
+			};
+
+		}
+
+		template<class FloatParam, class Next>
+		template <class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void Extrude<FloatParam, Next>::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			ExtrudeImpl<InShape, TScope, FloatParam, Next,
+				true// (type_equals<decltype(FloatParam::eval(declval<Scope::ScopedShape<InShape, TScope>>())), float>::value)
+			> ::apply(scopedShape);
+		}
+	}
+}
+
+#endif

@@ -1,0 +1,155 @@
+#ifndef INCLUDED_OPERATORS_REPEAT_IMPLEMENTAION
+#define INCLUDED_OPERATORS_REPEAT_IMPLEMENTAION
+
+#pragma once
+
+
+#include "Repeat.h"
+#include "parameters/Axis.h"
+#include <tuple>
+
+namespace PGG
+{
+	namespace Shapes
+	{
+		template<int>
+		struct StaticPrism;
+
+		template<int>
+		struct DynamicPrism;
+	}
+}
+
+namespace PGG
+{
+	namespace Operators
+	{
+		namespace
+		{
+			DUAL_BUILD_FUNCTION
+			std::tuple<int,float> computeRepeatNumSize(float size, float param)
+			{
+				if (param < 0.0f)
+					param = -param * size;
+				float repetitions = math::floor(size / param);
+				return std::make_tuple(static_cast<int>(repetitions),size / math::max(1.0f, repetitions));
+			}
+
+			template<class InShape, class TScope, class TAxis, class FloatParam, class Next, bool staticAxis, bool heightbased, bool enable = false>
+			struct RepeatImpl;
+
+			template<class InShape, class TScope, class TAxis, class FloatParam, class Next>
+			struct RepeatImpl<InShape, TScope, TAxis, FloatParam, Next, true, false, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape<InShape, TScope> inShapeState(scopedShape);
+					float param = FloatParam::eval(inShapeState);
+					float ssize = Parameters::accessVec<TAxis::Axis, decltype(inShapeState.shape.size)>(inShapeState.shape.size);
+					auto numSize = computeRepeatNumSize(ssize, param);
+					Scope::ScopedShape<InShape, TScope> newShape(inShapeState);
+					//move to the beginning of the shape
+					Parameters::accessVec<TAxis::Axis>(newShape.shape.size) = std::get<1>(numSize);
+					newShape.scope.translateShape((0.5f*(std::get<1>(numSize)-ssize))*Parameters::SubAccess<TAxis::Axis, math::float3>::mask());
+					Next::apply(newShape, 0);
+					for (int i = 1; i < std::get<0>(numSize); ++i)
+					{
+						newShape.scope.translateShape(std::get<1>(numSize)*Parameters::SubAccess<TAxis::Axis, math::float3>::mask());
+						Next::apply(newShape, i);
+					}
+				}
+			};
+
+			template<class InShape, class TScope, class TAxis, class FloatParam, class Next>
+			struct RepeatImpl<InShape, TScope, TAxis, FloatParam, Next, true, true, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					static_assert(TAxis::Axis == Parameters::Axes::YAxis, "Shape can only be repeated along Y-axis");
+
+					Scope::ScopedShape<InShape, TScope> inShapeState(scopedShape);
+					float param = FloatParam::eval(inShapeState);
+					float height = inShapeState.shape.height;
+					auto numSize = computeRepeatNumSize(height, param);
+					Scope::ScopedShape<InShape, TScope> newShape(inShapeState);
+					//move to the beginning of the shape
+					newShape.shape.height = std::get<1>(numSize);
+					newShape.scope.translateShape((0.5f*(std::get<1>(numSize)-height))*math::float3(0.0f, 1.0f, 0.0f));
+					Next::apply(newShape, 0);
+					for (int i = 1; i < std::get<0>(numSize); ++i)
+					{
+						newShape.scope.translateShape(std::get<1>(numSize)*math::float3(0.0f, 1.0f, 0.0f));
+						Next::apply(newShape, i);
+					}
+				}
+			};
+
+			template<class InShape, class TScope, class TAxis, class FloatParam, class Next>
+			struct RepeatImpl<InShape, TScope, TAxis, FloatParam, Next, false, false, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape<InShape, TScope> inShapeState(scopedShape);
+					float param = FloatParam::eval(inShapeState);
+					Parameters::Axes axis = TAxis::eval(inShapeState);
+					//TODO: should we add a runtime check for axis being available?
+					float ssize = Parameters::dynAccessVec(axis, inShapeState.shape.size);
+					auto numSize = computeRepeatNumSize(ssize, param);
+					Scope::ScopedShape<InShape, TScope> newShape(inShapeState);
+					Parameters::dynAccessVec(axis, newShape.shape.size) = std::get<1>(numSize);
+					//move to the beginning of the shape
+					math::float3 mask = Parameters::DynSubAccess<math::float3>::mask(axis);
+					newShape.scope.translateShape((0.5f*(std::get<1>(numSize)-ssize))*mask);
+					Next::apply(newShape, 0);
+					for (int i = 1; i < std::get<0>(numSize); ++i)
+					{
+						newShape.scope.translateShape(std::get<1>(numSize)*mask);
+						Next::apply(newShape, i);
+					}
+				}
+			};
+
+			template<class InShape, class TScope, class TAxis, class FloatParam, class Next>
+			struct RepeatImpl<InShape, TScope, TAxis, FloatParam, Next, false, true, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					//TODO: should we make sure axis is y axis?
+
+					Scope::ScopedShape<InShape, TScope> inShapeState(scopedShape);
+					float param = FloatParam::eval(inShapeState);
+					float height = scopedShape.shape.height;
+					auto numSize = computeRepeatNumSize(height, param);
+					Scope::ScopedShape<InShape, TScope> newShape(inShapeState);
+					newShape.shape.height = std::get<1>(numSize);
+					//move to the beginning of the shape
+					math::float3 mask(0.0f, 1.0f, 0.0f);
+					newShape.scope.translateShape((0.5f*(std::get<1>(numSize)-height))*mask);
+					Next::apply(newShape, 0);
+					for (int i = 1; i < std::get<0>(numSize); ++i)
+					{
+						newShape.scope.translateShape(std::get<1>(numSize)*mask);
+						Next::apply(newShape, i);
+					}
+				}
+			};
+		}
+
+		template<class TAxis, class FloatParam, class Next>
+		template <class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void Repeat<TAxis, FloatParam, Next>::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			RepeatImpl<InShape, TScope, TAxis, FloatParam, Next,
+				Parameters::has_static_axis<TAxis>::value,
+				Shapes::has_height<InShape>::value,
+				type_equals<decltype(TAxis::eval(declval<Scope::ScopedShape<InShape, TScope>&>())), Parameters::Axes>::value &&
+				((Shapes::Traits::HasSizeVector<InShape>::value >= Parameters::toInt<TAxis::Axis>::value) ||
+				Shapes::has_height<InShape>::value) &&
+				type_equals<decltype(FloatParam::eval(declval<Scope::ScopedShape<InShape, TScope>&>())), float>::value
+			> ::apply(scopedShape);
+		}
+
+	}
+}
+
+#endif

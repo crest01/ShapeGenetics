@@ -1,0 +1,84 @@
+#ifndef INCLUDED_OPERATORS_RESIZE_IMPLEMENTATION
+#define INCLUDED_OPERATORS_RESIZE_IMPLEMENTATION
+
+#pragma once
+
+#include "Resize.h"
+
+
+namespace PGG
+{
+	namespace Operators
+	{
+		namespace
+		{
+			template<class InShape, class TScope, class Param, class Next, bool enable = false>
+			struct ResizeImpl;
+
+			template<class InShape, class TScope, class Param, class Next>
+			struct ResizeImpl<InShape, TScope, Param, Next, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape<InShape, TScope> newShape(scopedShape);
+					newShape.shape.size = newShape.shape.size * Param::eval(newShape);
+					Next::apply(newShape);
+				}
+			};
+
+			template<class InShape, class TScope, class Param, class Next, bool enable = false>
+			struct SetSizeImpl;
+
+			template<class InShape, class TScope, class Param, class Next>
+			struct SetSizeImpl<InShape, TScope, Param, Next, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape<InShape, TScope> newShape(scopedShape);
+					newShape.shape.size = Param::eval(newShape);
+					Next::apply(newShape);
+				}
+			};
+		}
+
+		
+
+		template<class Param, class Next>
+		template <class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void Resize<Param, Next> :: apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			ResizeImpl<InShape, TScope, Param, Next,
+				#if __GNUC__
+					true
+				#else
+					(type_equals<decltype(Param::eval(declval<Scope::ScopedShape<InShape, TScope>>())), math::float3>::value &&
+					Shapes::Traits::HasSizeVector<InShape>::value == 3) ||
+					(type_equals<decltype(Param::eval(declval<Scope::ScopedShape<InShape, TScope>>())), math::float2>::value &&
+					Shapes::Traits::HasSizeVector<InShape>::value == 2) ||
+					(type_equals<decltype(Param::eval(declval<Scope::ScopedShape<InShape, TScope>>())), float>::value &&
+					Shapes::Traits::HasSizeVector<InShape>::value > 0) 
+				#endif
+					>
+				
+				::apply(scopedShape);
+
+		}
+
+		template<class Param, class Next>
+		template <class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void SetSize<Param, Next> :: apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			SetSizeImpl<InShape, TScope, Param, Next,
+				(type_equals<decltype(Param::eval(declval<Scope::ScopedShape<InShape, TScope>>())), math::float3>::value &&
+				Shapes::Traits::HasSizeVector<InShape>::value == 3) ||
+				(type_equals<decltype(Param::eval(declval<Scope::ScopedShape<InShape, TScope>>())), math::float2>::value &&
+				Shapes::Traits::HasSizeVector<InShape>::value == 2) ||
+				(type_equals<decltype(Param::eval(declval<Scope::ScopedShape<InShape, TScope>>())), float>::value &&
+				Shapes::Traits::HasSizeVector<InShape>::value == 1) >
+			::apply(scopedShape);
+		}
+
+	}
+}
+
+#endif //INCLUDED_OPERATORS_SCOPE_OPERATORS_IMPLEMENTATION

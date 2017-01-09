@@ -1,0 +1,144 @@
+#ifndef INCLUDED_OPERATORS_RANDOM_PATH_IMPL
+#define INCLUDED_OPERATORS_RANDOM_PATH_IMPL
+
+#pragma once
+
+#include "RandomPath.h"
+
+namespace PGG
+{
+	namespace Operators
+	{
+		namespace
+		{
+			template<class InShape, class TScope, class ... Pairs>
+			struct RandomPathLikelihoodCalculator;
+
+			template<class InShape, class TScope, class FloatParamA, class NextA, class ... Remaining>
+			struct RandomPathLikelihoodCalculator<InShape, TScope, FloatParamA, NextA, Remaining...>
+			{
+				DUAL_BUILD_FUNCTION static
+					typename enable_if<
+					type_equals<decltype(FloatParamA::eval(declval<Scope::ScopedShape<InShape, TScope>>())), float>::value,
+					float> ::type
+					computeLikelihood(Scope::ScopedShape<InShape, TScope> scopedShape)
+				{
+					float likelihood = FloatParamA::eval(scopedShape);
+					float other = RandomPathLikelihoodCalculator<InShape, TScope, Remaining...>::computeLikelihood(scopedShape);
+					return likelihood + other;
+				}
+			};
+			template<class InShape, class TScope>
+			struct RandomPathLikelihoodCalculator<InShape, TScope>
+			{
+				DUAL_BUILD_FUNCTION static
+					float computeLikelihood(const Scope::ScopedShape<InShape, TScope>& scopedShape)
+				{
+					return 0.0f;
+				}
+			};
+
+			template<class InShape, class TScope, class ... Likelihood_Next_Pairs>
+			struct RandomPathImplRec;
+
+			template<class InShape, class TScope, class FloatParam, class Next, class FloatParam2, class Next2, class ... Likelihood_Next_Pairs>
+			struct RandomPathImplRec<InShape, TScope, FloatParam, Next, FloatParam2, Next2, Likelihood_Next_Pairs...>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope>& scopedShape, float v)
+				{
+					float this_likelihood = FloatParam::eval(scopedShape);
+					if (v < this_likelihood)
+						Next::apply(scopedShape);
+					else
+						RandomPathImplRec<InShape, TScope, FloatParam2, Next2, Likelihood_Next_Pairs...>::apply(scopedShape, v - this_likelihood);
+				}
+			};
+
+			template<class InShape, class TScope, class FloatParam, class Next>
+			struct RandomPathImplRec<InShape, TScope, FloatParam, Next>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope>& scopedShape, float v)
+				{
+					Next::apply(scopedShape);
+				}
+			};
+
+
+			template<class InShape, class TScope, int RandomScopeLayer, class ... Likelihood_Next_Pairs>
+			struct RandomPathImpl
+			{
+				DUAL_BUILD_FUNCTION static void apply(Scope::ScopedShape<InShape, TScope> scopedShape, float likelihoodsum)
+				{
+					auto & rng = scopedShape.scope.template accessLayer<RandomScopeLayer>();
+					float rval = rng.generateFloat() * likelihoodsum;
+					RandomPathImplRec<InShape, TScope, Likelihood_Next_Pairs...>::apply(scopedShape, rval);
+				}
+			};
+
+			template<class InShape, class TScope, int RandomScopeLayer, class LikelihoodSum, bool enable, class ... Likelihood_Next_Pairs>
+			struct RandomPathPrecomputedImpl;
+
+			template<class InShape, class TScope, int RandomScopeLayer, class LikelihoodSum, class ... Likelihood_Next_Pairs>
+			struct RandomPathPrecomputedImpl<InShape, TScope, RandomScopeLayer, LikelihoodSum, true, Likelihood_Next_Pairs...>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> scopedShape)
+				{
+					float likelihoodsum = LikelihoodSum::eval(scopedShape);
+					RandomPathImpl<InShape, TScope, RandomScopeLayer, Likelihood_Next_Pairs...>::apply(scopedShape, likelihoodsum);
+				}
+			};
+
+			template<class InShape, class TScope, class ... Active_Next_Pairs>
+			struct ChoosePathRec;
+
+			template<class InShape, class TScope>
+			struct ChoosePathRec<InShape, TScope>
+			{
+				DUAL_BUILD_FUNCTION static void apply(Scope::ScopedShape<InShape, TScope>& scopedShape, int chosen = 0)
+				{
+				}
+			};
+
+			template<class InShape, class TScope, class Param, class Next, class ... Active_Next_Pairs>
+			struct ChoosePathRec<InShape, TScope, Param, Next, Active_Next_Pairs...>
+			{
+				DUAL_BUILD_FUNCTION static void apply(Scope::ScopedShape<InShape, TScope>& scopedShape, int chosen = 0)
+				{
+					if (Param::eval(scopedShape))
+						Next::apply(scopedShape, chosen++);
+					ChoosePathRec<InShape, TScope, Active_Next_Pairs...>::apply(scopedShape, chosen);
+				}
+			};
+		}
+
+		template <int RandomScopeLayer, class ... Likelihood_Next_Pairs>
+		template <class InShape, class TScope>
+		DUAL_BUILD_FUNCTION
+		void RandomPath<RandomScopeLayer, Likelihood_Next_Pairs...>::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			float likelihoodsum = RandomPathLikelihoodCalculator<InShape, TScope, Likelihood_Next_Pairs... > ::computeLikelihood(scopedShape);
+			RandomPathImpl<InShape, TScope, RandomScopeLayer, Likelihood_Next_Pairs...>::apply(scopedShape, likelihoodsum);
+		}
+
+
+		template <int RandomScopeLayer, class LikelihoodSum, class ... Likelihood_Next_Pairs>
+		template <class InShape, class TScope>
+		DUAL_BUILD_FUNCTION
+		void RandomPathPrecomputed<RandomScopeLayer, LikelihoodSum, Likelihood_Next_Pairs...>::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			RandomPathPrecomputedImpl<InShape, TScope, RandomScopeLayer, LikelihoodSum,
+				type_equals<decltype(LikelihoodSum::eval(declval<Scope::ScopedShape<InShape, TScope>>())), float>::value,
+				Likelihood_Next_Pairs...>::apply(scopedShape);
+		}
+
+		template<class ... Active_Next_Pairs>
+		template <class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void ChoosePath<Active_Next_Pairs...>::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			Scope::ScopedShape<InShape, TScope> nShape(scopedShape);
+			ChoosePathRec<InShape, TScope, Active_Next_Pairs...>::apply(nShape);
+		}
+	}
+}
+
+#endif

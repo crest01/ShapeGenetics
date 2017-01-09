@@ -1,0 +1,131 @@
+#ifndef INCLUDED_OPERATORS_GENERATOR_IMPLEMENTATION
+#define INCLUDED_OPERATORS_GENERATOR_IMPLEMENTATION
+
+#pragma once
+
+#include "DualBuild.h"
+#include "scope/Scope.h"
+#include "shapes/Platonics.h"
+#include "shapes/Quad.h"
+
+namespace PGG
+{
+	namespace Operators
+	{
+		namespace
+		{
+			template<class InShape, class TScope, class CustomGenerator>
+			struct GeneratorImpl;
+
+			template<class TScope, class CustomGenerator>
+			struct GeneratorImpl<Shapes::Box, TScope, CustomGenerator>
+			{
+				
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<Shapes::Box, TScope> & scopedShape)
+				{
+					math::float3 halfSize = scopedShape.shape.size * 0.5f;
+
+#ifdef LEFTHANDED
+					const float r = -1.0f;
+#else
+					const float r = 1.0f;
+#endif
+					math::float3 n0(0.f,  1.f, 0.f); math::float3 n1( 1.f, 0.f, 0.f); math::float3 n2(0.f, 0.f,  r);
+					math::float3 n3(0.f, -1.f, 0.f); math::float3 n4(-1.f, 0.f, 0.f); math::float3 n5(0.f, 0.f, -r);
+
+					math::float2 t0(0.f, 0.f); math::float2 t1(1.f, 0.f); math::float2 t2(1.f, 1.f); math::float2 t3(0.f, 1.f);
+
+					auto ret = CustomGenerator::newShape(scopedShape);
+					CustomGenerator::allocVertices(ret, 24u);
+
+					// TOP
+					CustomGenerator::addVertex(ret,  0, math::float3(-halfSize.x,  halfSize.y,  r*halfSize.z), n0, t0);
+					CustomGenerator::addVertex(ret,  1, math::float3( halfSize.x,  halfSize.y,  r*halfSize.z), n0, t1);
+					CustomGenerator::addVertex(ret,  2, math::float3( halfSize.x,  halfSize.y, -r*halfSize.z), n0, t2);
+					CustomGenerator::addVertex(ret,  3, math::float3(-halfSize.x,  halfSize.y, -r*halfSize.z), n0, t3);
+
+					// LEFT
+					CustomGenerator::addVertex(ret,  4, math::float3(-halfSize.x, -halfSize.y, -r*halfSize.z), n4, t0);
+					CustomGenerator::addVertex(ret,  5, math::float3(-halfSize.x, -halfSize.y,  r*halfSize.z), n4, t1);
+					CustomGenerator::addVertex(ret,  6, math::float3(-halfSize.x,  halfSize.y,  r*halfSize.z), n4, t2);
+					CustomGenerator::addVertex(ret,  7, math::float3(-halfSize.x,  halfSize.y, -r*halfSize.z), n4, t3);
+
+					// BOTTOM
+					CustomGenerator::addVertex(ret,  8, math::float3( halfSize.x, -halfSize.y,  r*halfSize.z), n3, t0);
+					CustomGenerator::addVertex(ret,  9, math::float3(-halfSize.x, -halfSize.y,  r*halfSize.z), n3, t1);
+					CustomGenerator::addVertex(ret, 10, math::float3(-halfSize.x, -halfSize.y, -r*halfSize.z), n3, t2);
+					CustomGenerator::addVertex(ret, 11, math::float3( halfSize.x, -halfSize.y, -r*halfSize.z), n3, t3);
+
+					// FRONT
+					CustomGenerator::addVertex(ret, 12, math::float3(-halfSize.x, -halfSize.y,  r*halfSize.z), n2, t0);
+					CustomGenerator::addVertex(ret, 13, math::float3( halfSize.x, -halfSize.y,  r*halfSize.z), n2, t1);
+					CustomGenerator::addVertex(ret, 14, math::float3( halfSize.x,  halfSize.y,  r*halfSize.z), n2, t2);
+					CustomGenerator::addVertex(ret, 15, math::float3(-halfSize.x,  halfSize.y,  r*halfSize.z), n2, t3);
+
+					// RIGHT
+					CustomGenerator::addVertex(ret, 16, math::float3( halfSize.x, -halfSize.y,  r*halfSize.z), n1, t0);
+					CustomGenerator::addVertex(ret, 17, math::float3( halfSize.x, -halfSize.y, -r*halfSize.z), n1, t1);
+					CustomGenerator::addVertex(ret, 18, math::float3( halfSize.x,  halfSize.y, -r*halfSize.z), n1, t2);
+					CustomGenerator::addVertex(ret, 19, math::float3( halfSize.x,  halfSize.y,  r*halfSize.z), n1, t3);
+
+					// BACK
+					CustomGenerator::addVertex(ret, 20, math::float3( halfSize.x, -halfSize.y, -r*halfSize.z), n5, t0);
+					CustomGenerator::addVertex(ret, 21, math::float3(-halfSize.x, -halfSize.y, -r*halfSize.z), n5, t1);
+					CustomGenerator::addVertex(ret, 22, math::float3(-halfSize.x,  halfSize.y, -r*halfSize.z), n5, t2);
+					CustomGenerator::addVertex(ret, 23, math::float3( halfSize.x,  halfSize.y, -r*halfSize.z), n5, t3);
+
+					CustomGenerator::allocIndices(ret, 36u);
+					CustomGenerator::addTriangle(ret,  0,  1,  2); CustomGenerator::addTriangle(ret,  0,  2,  3);
+					CustomGenerator::addTriangle(ret,  4,  5,  6); CustomGenerator::addTriangle(ret,  4,  6,  7);
+					CustomGenerator::addTriangle(ret,  8,  9, 10); CustomGenerator::addTriangle(ret,  8, 10, 11);
+					CustomGenerator::addTriangle(ret, 12, 13, 14); CustomGenerator::addTriangle(ret, 12, 14, 15);
+					CustomGenerator::addTriangle(ret, 16, 17, 18); CustomGenerator::addTriangle(ret, 16, 18, 19);
+					CustomGenerator::addTriangle(ret, 20, 21, 22); CustomGenerator::addTriangle(ret, 20, 22, 23);
+
+					CustomGenerator::finalize(ret);
+				}
+			};
+
+			template<class TScope, class CustomGenerator>
+			struct GeneratorImpl<Shapes::Quad, TScope, CustomGenerator>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<Shapes::Quad, TScope> & scopedShape)
+				{
+					math::float2 halfSize = scopedShape.shape.size * 0.5f;
+					
+					auto ret = CustomGenerator::newShape(scopedShape);
+					CustomGenerator::allocVertices(ret, 4u);
+
+					math::float3 n(0.0f, 0.0f, 1.0f);
+
+#ifdef LEFTHANDED
+					const float r = -1.0f;
+#else
+					const float r = 1.0f;
+#endif
+
+					CustomGenerator::addVertex(ret, 0, math::float3(-r*halfSize.x, -halfSize.y, 0.0f), n, math::float2(0.0f, 0.0f));
+					CustomGenerator::addVertex(ret, 1, math::float3( r*halfSize.x, -halfSize.y, 0.0f), n, math::float2(1.0f, 0.0f));
+					CustomGenerator::addVertex(ret, 2, math::float3( r*halfSize.x,  halfSize.y, 0.0f), n, math::float2(1.0f, 1.0f));
+					CustomGenerator::addVertex(ret, 3, math::float3(-r*halfSize.x,  halfSize.y, 0.0f), n, math::float2(0.0f, 1.0f));
+
+					CustomGenerator::allocIndices(ret, 6u);
+					CustomGenerator::addTriangle(ret, 0, 1, 2); CustomGenerator::addTriangle(ret, 0, 2, 3);
+
+					CustomGenerator::finalize(ret);
+				}
+			};
+		}
+		template<class CustomGenerator>
+		struct Generator
+		{
+			template <class InShape, class TScope>
+			DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+			{
+				GeneratorImpl<InShape, TScope, CustomGenerator>::apply(scopedShape);
+			}
+		};
+	}
+}
+
+#endif //INCLUDED_OPERATORS_GENERATOR_IMPLEMENTATION

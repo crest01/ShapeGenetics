@@ -1,0 +1,249 @@
+#ifndef INCLUDED_OPERATORS_SCOPE_OPERATORS_IMPLEMENTATION
+#define INCLUDED_OPERATORS_SCOPE_OPERATORS_IMPLEMENTATION
+
+#pragma once
+
+#include "ScopeOperators.h"
+#include "MatrixTransformations.h"
+
+namespace PGG
+{
+	namespace Operators
+	{
+		namespace
+		{
+			template<class InShape, class TScope, class Float3Param, class Next, bool enable = false>
+			struct TranslateImpl;
+
+			template<class InShape, class TScope, class Float3Param, class Next>
+			struct TranslateImpl<InShape, TScope, Float3Param, Next, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape<InShape, TScope> newShape(scopedShape);
+					newShape.scope.translateShape(Float3Param::eval(newShape));
+					Next:: apply(newShape);
+				}
+			};
+		}
+
+
+		template<class Float3Param, class Next>
+		template<class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void Translate <Float3Param, Next> ::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			TranslateImpl<InShape, TScope, Float3Param, Next,
+			#if __GNUC__
+				true
+			#else
+				type_equals<decltype(Float3Param::eval(declval<Scope::ScopedShape<InShape, TScope>>())), math::float3>::value 
+			#endif
+			>
+			::apply(scopedShape);
+		}
+
+		namespace
+		{
+			template<class InShape, class TScope, class FloatXParam, class Next, bool enable = false>
+			struct ScaleImpl;
+
+			template<class InShape, class TScope, class FloatXParam, class Next>
+			struct ScaleImpl<InShape, TScope, FloatXParam, Next, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape<InShape, TScope> newShape(scopedShape);
+					newShape.scope.scaleShape(FloatXParam::eval(newShape));
+					Next:: template apply(newShape);
+				}
+			};
+		}
+
+		template<class FloatXParam, class Next>
+		template<class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void Scale <FloatXParam, Next> ::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			ScaleImpl<InShape, TScope, FloatXParam, Next,
+				type_equals<decltype(FloatXParam::eval(declval<Scope::ScopedShape<InShape, TScope>>())), math::float3>::value ||
+				type_equals<decltype(FloatXParam::eval(declval<Scope::ScopedShape<InShape, TScope>>())), float>::value
+			>
+			::apply(scopedShape);
+		}
+
+		namespace
+		{
+			template<class InShape, class TScope, Parameters::Axes Axis>
+			class Rotator;
+
+			template<class InShape, class TScope>
+			struct Rotator<InShape, TScope, Parameters::Axes::XAxis>
+			{
+				DUAL_BUILD_FUNCTION
+				static void rotate(Scope::ScopedShape<InShape, TScope>& newShape, float angle)
+				{
+					math::float3x3 rotmatrix = math::rotateX(angle);
+					newShape.scope.rotateShape(rotmatrix);
+				}
+			};
+
+			template<class InShape, class TScope>
+			struct Rotator<InShape, TScope, Parameters::Axes::YAxis>
+			{
+				DUAL_BUILD_FUNCTION
+				static void rotate(Scope::ScopedShape<InShape, TScope>& newShape, float angle)
+				{
+					math::float3x3 rotmatrix = math::rotateY(angle);
+					newShape.scope.rotateShape(rotmatrix);
+				}
+			};
+
+			template<class InShape, class TScope>
+			struct Rotator<InShape, TScope, Parameters::Axes::ZAxis>
+			{
+				DUAL_BUILD_FUNCTION
+				static void rotate(Scope::ScopedShape<InShape, TScope>& newShape, float angle)
+				{
+					math::float3x3 rotmatrix = math::rotateZ(angle);
+					newShape.scope.rotateShape(rotmatrix);
+				}
+			};
+
+			template<class InShape, class TScope, class TAxis, class Param, class Next, bool static_axis, bool enable = false>
+			struct RotateImpl;
+
+			template<class InShape, class TScope, class TAxis, class Param, class Next>
+			struct RotateImpl<InShape, TScope, TAxis, Param, Next, true, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape < InShape, TScope > newShape(scopedShape);
+					float angle = Param::eval(newShape);
+					Rotator<InShape, TScope, TAxis::Axis> ::rotate(newShape, angle);
+					Next::apply(newShape);
+				}
+			};
+
+			template<class InShape, class TScope, class TAxis, class Param, class Next>
+			struct RotateImpl<InShape, TScope, TAxis, Param, Next, false, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape < InShape, TScope > newShape(scopedShape);
+					float angle = Param::eval(newShape);
+					Parameters::Axes axis = TAxis::eval(newShape);
+					switch (axis)
+					{
+					case Parameters::Axes::XAxis:
+						Rotator<InShape, TScope, Parameters::Axes::XAxis > ::rotate(newShape, angle);
+					case Parameters::Axes::YAxis:
+						Rotator<InShape, TScope, Parameters::Axes::YAxis > ::rotate(newShape, angle);
+					case Parameters::Axes::ZAxis:
+						Rotator<InShape, TScope, Parameters::Axes::ZAxis > ::rotate(newShape, angle);
+					}
+					Next::apply(newShape);
+				}
+			};
+
+			template<class InShape, class TScope, class Float3x3Param, class Next, bool enable = false>
+			struct RotateMatrixImpl;
+
+			template<class InShape, class TScope, class Float3x3Param, class Next>
+			struct RotateMatrixImpl<InShape, TScope, Float3x3Param, Next, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape<InShape, TScope> newShape(scopedShape);
+					newShape.scope.rotateShape(Float3x3Param::eval(newShape));
+					Next::apply(newShape);
+				}
+			};
+		}
+
+
+		template<class TAxis, class Param, class Next>
+		struct Rotate<TAxis, Param, Next>
+		{
+			template<class InShape, class TScope>
+			DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+			{
+				RotateImpl<InShape, TScope, TAxis, Param, Next,
+					Parameters::has_static_axis<TAxis>::value,
+					type_equals<decltype(TAxis::eval(declval<Scope::ScopedShape<InShape, TScope>&>())), Parameters::Axes>::value &&
+					type_equals<decltype(Param::eval(declval<Scope::ScopedShape<InShape, TScope>&>())), float>::value
+				>
+				::apply(scopedShape);
+			}
+		};
+
+		template<class Float3x3Param, class Next>
+		struct Rotate<Float3x3Param, Next>
+		{
+			template<class InShape, class TScope>
+			DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+			{
+				RotateMatrixImpl<InShape, TScope, Float3x3Param, Next,
+					type_equals<decltype(Float3x3Param::eval(declval<Scope::ScopedShape<InShape, TScope>>())), math::float3x3>::value
+				>
+				::apply(scopedShape);
+			}
+		};
+
+
+		namespace
+		{
+			template<class InShape, class TScope, class Float4x4Param, class Next, bool enable = false>
+			struct TransformObjectImpl;
+
+			template<class InShape, class TScope, class Float4x4Param, class Next>
+			struct TransformObjectImpl<InShape, TScope, Float4x4Param, Next, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape<InShape, TScope> newShape(scopedShape);
+					newShape.scope.transformShape(Float4x4Param::eval(newShape));
+					Next:: template apply(newShape);
+				}
+			};
+		}
+
+		template<class Float4x4Param, class Next>
+		template<class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void TransformObject <Float4x4Param, Next> ::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			TransformObjectImpl<InShape, TScope, Float4x4Param, Next,
+				type_equals<decltype(Float4x4Param::eval(declval<Scope::ScopedShape<InShape, TScope>>())), math::float4x4>::value
+			>
+			::apply(scopedShape);
+		}
+
+		namespace
+		{
+			template<class InShape, class TScope, class Float3x4Param, class Next, bool enable = false>
+			struct SetCoordinateAxisImpl;
+
+			template<class InShape, class TScope, class Float3x4Param, class Next>
+			struct SetCoordinateAxisImpl<InShape, TScope, Float3x4Param, Next, true>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+				{
+					Scope::ScopedShape<InShape, TScope> newShape(scopedShape);
+					newShape.scope.matrix = Float3x4Param::eval(newShape);
+					Next:: template apply(newShape);
+				}
+			};
+		}
+
+		template<class Float3x4Param, class Next>
+		template<class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void SetCoordinateAxis <Float3x4Param, Next> ::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			SetCoordinateAxisImpl<InShape, TScope, Float3x4Param, Next,
+				type_equals<decltype(Float3x4Param::eval(declval<Scope::ScopedShape<InShape, TScope>>())), math::float3x4>::value
+			>
+			::apply(scopedShape);
+		}
+
+	}
+}
+
+#endif //INCLUDED_OPERATORS_SCOPE_OPERATORS_IMPLEMENTATION

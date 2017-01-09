@@ -1,0 +1,69 @@
+#ifndef INCLUDED_OPERATORS_COMPONENT_SPLIT_IMPLEMENTATION
+#define INCLUDED_OPERATORS_COMPONENT_SPLIT_IMPLEMENTATION
+
+#pragma once
+
+
+#include "ComponentSplit.h"
+
+#include "shapes/Platonics.h"
+#include "shapes/Quad.h"
+#include "MatrixTransformations.h"
+
+namespace PGG
+{
+	namespace Operators
+	{
+		namespace
+		{
+			template<class InShape, class TScope, class ... PartsAndNext>
+			struct CompSplitImpl;
+
+			template<class TScope, class BottomQuad, class TopQuad, class Mantle>
+			struct CompSplitImpl<Shapes::Box, TScope, BottomQuad, TopQuad, Mantle>
+			{
+				DUAL_BUILD_FUNCTION static void apply(const Scope::ScopedShape<Shapes::Box, TScope> & scopedShape)
+				{
+					const Shapes::Box& box(scopedShape.shape);
+
+					Scope::ScopedShape<Shapes::Quad, TScope> topQuad(Shapes::Quad(box.size.xz()), scopedShape.scope);
+					topQuad.scope.rotateShape(math::rotateX(0.5f*math::constants<float>::pi()));
+					topQuad.scope.translateShape(math::float3(0, 0, 0.5f*box.size.y));
+					TopQuad::apply(topQuad, 0);
+
+					
+					//math::float4x4 rotate_up(rotationAndTranslation(math::rotateX(-0.5f*math::constants<float>::pi())));
+					math::float4x4 rotate_mantle = math::identity<math::float4x4>();
+					for (int i = 1; i < 5; ++i)
+					{
+						float s2 = box.size.y;
+						float s1 = (i % 2) ? box.size.x : box.size.z;
+#ifdef LEFTHANDED
+						float t = 0.5f*((i % 2) ? box.size.z : box.size.x);
+#else
+						float t = -0.5f*((i % 2) ? box.size.z : box.size.x);
+#endif
+						Scope::ScopedShape<Shapes::Quad, TScope> mantleQuad(Shapes::Quad(math::float2(s1, s2)), scopedShape.scope);
+						mantleQuad.scope.transformShape(rotate_mantle * math::translate(0, 0, t)); // *rotate_up);
+						Mantle::apply(mantleQuad, i);
+						rotate_mantle = rotate_mantle * rotationAndTranslation(math::rotateY(0.5f*math::constants<float>::pi()));
+					}
+					
+					Scope::ScopedShape<Shapes::Quad, TScope> bottomQuad(Shapes::Quad(box.size.xz()), scopedShape.scope);
+					bottomQuad.scope.rotateShape(math::rotateX(-0.5f*math::constants<float>::pi()));
+					bottomQuad.scope.translateShape(math::float3(0,0,0.5f*box.size.y));
+					BottomQuad::apply(bottomQuad, 5);
+
+				}
+			};
+		}
+		template<class ... PartsAndNext>
+		template <class InShape, class TScope>
+		DUAL_BUILD_FUNCTION void CompSplit<PartsAndNext...>::apply(const Scope::ScopedShape<InShape, TScope> & scopedShape)
+		{
+			CompSplitImpl<InShape, TScope, PartsAndNext...> ::apply(scopedShape);
+		}
+	}
+}
+
+#endif //INCLUDED_OPERATORS_CHANGE_SHAPE

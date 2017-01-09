@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test.vcxproj", "{64C7B210-B9AF-4563-A05A-561DAB6BBB20}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9FE148B8-877E-49B1-B598-A98940D5AC0A} = {9FE148B8-877E-49B1-B598-A98940D5AC0A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GL_platform_tools", "..\..\..\build\vs2015\GL_platform_tools.vcxproj", "{9FE148B8-877E-49B1-B598-A98940D5AC0A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1A1003D5-A7FA-4A12-B901-045A31EF55B0} = {1A1003D5-A7FA-4A12-B901-045A31EF55B0}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glcore", "..\..\..\build\vs2015\glcore.vcxproj", "{1A1003D5-A7FA-4A12-B901-045A31EF55B0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug DLL|x64 = Debug DLL|x64
+		Debug|x64 = Debug|x64
+		Release DLL|x64 = Release DLL|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64C7B210-B9AF-4563-A05A-561DAB6BBB20}.Debug DLL|x64.ActiveCfg = Debug DLL|x64
+		{64C7B210-B9AF-4563-A05A-561DAB6BBB20}.Debug DLL|x64.Build.0 = Debug DLL|x64
+		{64C7B210-B9AF-4563-A05A-561DAB6BBB20}.Debug|x64.ActiveCfg = Debug|x64
+		{64C7B210-B9AF-4563-A05A-561DAB6BBB20}.Debug|x64.Build.0 = Debug|x64
+		{64C7B210-B9AF-4563-A05A-561DAB6BBB20}.Release DLL|x64.ActiveCfg = Release DLL|x64
+		{64C7B210-B9AF-4563-A05A-561DAB6BBB20}.Release DLL|x64.Build.0 = Release DLL|x64
+		{64C7B210-B9AF-4563-A05A-561DAB6BBB20}.Release|x64.ActiveCfg = Release|x64
+		{64C7B210-B9AF-4563-A05A-561DAB6BBB20}.Release|x64.Build.0 = Release|x64
+		{9FE148B8-877E-49B1-B598-A98940D5AC0A}.Debug DLL|x64.ActiveCfg = Debug DLL|x64
+		{9FE148B8-877E-49B1-B598-A98940D5AC0A}.Debug DLL|x64.Build.0 = Debug DLL|x64
+		{9FE148B8-877E-49B1-B598-A98940D5AC0A}.Debug|x64.ActiveCfg = Debug|x64
+		{9FE148B8-877E-49B1-B598-A98940D5AC0A}.Debug|x64.Build.0 = Debug|x64
+		{9FE148B8-877E-49B1-B598-A98940D5AC0A}.Release DLL|x64.ActiveCfg = Release DLL|x64
+		{9FE148B8-877E-49B1-B598-A98940D5AC0A}.Release DLL|x64.Build.0 = Release DLL|x64
+		{9FE148B8-877E-49B1-B598-A98940D5AC0A}.Release|x64.ActiveCfg = Release|x64
+		{9FE148B8-877E-49B1-B598-A98940D5AC0A}.Release|x64.Build.0 = Release|x64
+		{1A1003D5-A7FA-4A12-B901-045A31EF55B0}.Debug DLL|x64.ActiveCfg = Debug DLL|x64
+		{1A1003D5-A7FA-4A12-B901-045A31EF55B0}.Debug DLL|x64.Build.0 = Debug DLL|x64
+		{1A1003D5-A7FA-4A12-B901-045A31EF55B0}.Debug|x64.ActiveCfg = Debug|x64
+		{1A1003D5-A7FA-4A12-B901-045A31EF55B0}.Debug|x64.Build.0 = Debug|x64
+		{1A1003D5-A7FA-4A12-B901-045A31EF55B0}.Release DLL|x64.ActiveCfg = Release DLL|x64
+		{1A1003D5-A7FA-4A12-B901-045A31EF55B0}.Release DLL|x64.Build.0 = Release DLL|x64
+		{1A1003D5-A7FA-4A12-B901-045A31EF55B0}.Release|x64.ActiveCfg = Release|x64
+		{1A1003D5-A7FA-4A12-B901-045A31EF55B0}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,2 @@
+This almost worked, but details of the letters didn't come out all that well.
+We ended up splitting the target in 4 single pictures for more detailed results.
