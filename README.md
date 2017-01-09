@@ -11,11 +11,11 @@ This repository was merged from three separate repositories, and since i renamed
 ## Requirements
 The code has been tested on Arch Linux (with clang 3.5.2 or gcc 5.4) and Windows 10 with VS2015
 
-C++11
-CUDA >= 8.0 (for volumetric evaluation)
-OpenGL >= 4.3
-libpng
-zlib
+- C++11
+- CUDA >= 8.0 (for volumetric evaluation)
+- OpenGL >= 4.3
+- libpng
+- zlib
 ## Build
 coming soon in more detail
 execute cmake and make in procrender/build/cmake
