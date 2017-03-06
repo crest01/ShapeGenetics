@@ -1,18 +1,18 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(gpuprocgenetics_shared)
+project(genetics_shared)
 
 if (NOT DEFINED PROJECT_DIR)
 	get_filename_component(PROJECT_DIR "../../../.." ABSOLUTE)
 	MESSAGE( STATUS "Project dir:" ${PROJECT_DIR} )
 endif()
 
-if (NOT DEFINED gpuproccore_INCLUDE_DIRS)
-	message( SEND_ERROR "gpuproccore required. This library can't be built on its own.")
+if (NOT DEFINED proccore_INCLUDE_DIRS)
+	message( SEND_ERROR "proccore required. This library can't be built on its own.")
 endif()
 
 
-set(SOURCE_DIR "${PROJECT_DIR}/gpuprocgenetics/shared")
+set(SOURCE_DIR "${PROJECT_DIR}/genetics/shared")
 
 
 if (UNIX)
@@ -48,11 +48,11 @@ file(GLOB cpp_SOURCES
 		"${SOURCE_DIR}/*.cpp"
 )
 
-include_directories( ${include_dirs_INTERNAL} ${gpuproccore_INCLUDE_DIRS} ${Framework_INCLUDE_DIRS})
+include_directories( ${include_dirs_INTERNAL} ${proccore_INCLUDE_DIRS} ${Framework_INCLUDE_DIRS})
 
-add_library(gpuprocgenetics_shared STATIC ${h_SOURCES} ${cpp_SOURCES} )
+add_library(genetics_shared STATIC ${h_SOURCES} ${cpp_SOURCES} )
 
-set(shared_LIBRARIES gpuprocgenetics_shared ${gpuproccore_LIBRARIES} PARENT_SCOPE)
+set(shared_LIBRARIES genetics_shared ${proccore_LIBRARIES} PARENT_SCOPE)
 set(shared_INCLUDE_DIRS ${include_dirs_INTERNAL} PARENT_SCOPE)
 
 

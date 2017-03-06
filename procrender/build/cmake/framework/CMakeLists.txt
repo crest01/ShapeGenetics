@@ -57,7 +57,9 @@ if (WIN32)
 						${CUDA_core_tools_LIBRARIES}
 						${CUDA_compiler_tools_LIBRARIES}
 						${CUDA_LIBRARIES}
-						GL_core_tools
+						
+
+GL_core_tools
 						Win32_core_tools
 						PARENT_SCOPE)
 	MESSAGE(STATUS "cmake/framework: CUDA compiler tools libs: " ${CUDA_compiler_tools_LIBRARIES})

@@ -11,7 +11,7 @@ if (NOT DEFINED Framework_LIBRARIES)
 	message( SEND_ERROR "Framework required. This library can't be built on its own.")
 endif()
 
-set(SOURCE_DIR "${PROJECT_DIR}/gpuprocgenetics/eval/gpuimage")
+set(SOURCE_DIR "${PROJECT_DIR}/genetics/eval/gpuimage")
 
 
 if (UNIX)
@@ -22,8 +22,8 @@ endif()
  
 set(include_dirs_INTERNAL 
 	${SOURCE_DIR}
-	${PROJECT_DIR}/gpuproccore_ga/build/dependencies/utils
-	${PROJECT_DIR}/gpuproccore_ga/src/CPU
+	${PROJECT_DIR}/proccore/build/dependencies/utils
+	${PROJECT_DIR}/proccore/src/CPU
 	
 	)
 
@@ -38,7 +38,7 @@ file(GLOB cpp_SOURCES
 file(GLOB glsl_SOURCES "${SOURCE_DIR}/shaders/*.glsl")
 
 
-include_directories( ${include_dirs_INTERNAL} ${gpuproccore_INCLUDE_DIRS} ${shared_INCLUDE_DIRS} ${Framework_INCLUDE_DIRS})
+include_directories( ${include_dirs_INTERNAL} ${proccore_INCLUDE_DIRS} ${shared_INCLUDE_DIRS} ${Framework_INCLUDE_DIRS})
 
 
 glsl_add_include_directories("${glsl_SOURCES}" "${SOURCE_DIR}/shaders")

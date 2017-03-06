@@ -7,7 +7,7 @@ if (NOT DEFINED PROJECT_DIR)
 	MESSAGE( STATUS "Project dir:" ${PROJECT_DIR} )
 endif()
 
-set(SOURCE_DIR "${PROJECT_DIR}/gpuprocgenetics/eval/cpuvolume")
+set(SOURCE_DIR "${PROJECT_DIR}/genetics/eval/cpuvolume")
 
 
 if (UNIX)
@@ -18,8 +18,8 @@ endif()
  
 set(include_dirs_INTERNAL 
 	${SOURCE_DIR}
-	${PROJECT_DIR}/gpuproccore_ga/build/dependencies/utils
-	${PROJECT_DIR}/gpuproccore_ga/src/CPU
+	${PROJECT_DIR}/proccore/build/dependencies/utils
+	${PROJECT_DIR}/proccore/src/CPU
 )
 
 file(GLOB h_SOURCES 
@@ -30,7 +30,7 @@ file(GLOB cpp_SOURCES
 		"${SOURCE_DIR}/*.cpp"
 )
 
-include_directories( ${include_dirs_INTERNAL} ${gpuproccore_INCLUDE_DIRS} ${shared_INCLUDE_DIRS})
+include_directories( ${include_dirs_INTERNAL} ${proccore_INCLUDE_DIRS} ${shared_INCLUDE_DIRS})
 
 add_library(eval_cpuvolume STATIC ${h_SOURCES} ${cpp_SOURCES} )
 

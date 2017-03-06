@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 include("add_configuration.cmake")
 include("add_subdirectory_if_exists.cmake")
 
-project(gpuprocrender)
+project(procrender)
 
 add_definitions(-DLEFTHANDED)
 
@@ -19,7 +19,6 @@ else ()
 	set(CMAKE_CXX_FLAGS "-std=c++14")
 	set(CMAKE_EXE_LINKER_FLAGS "-lX11 -lcuda")
 endif ()
-endif()
 
 
 #####################################################################################
@@ -30,8 +29,8 @@ endif()
 # DEPENDENCIES_DIR: folder containing the dependencies (framework) for gpuprocrender
 ##################################################################################### 
 get_filename_component(PROJECT_DIR "../../.." ABSOLUTE)
-get_filename_component(SOURCE_DIR "../../src" ABSOLUTE)
-get_filename_component(DEPENDENCIES_DIR "../../dependencies" ABSOLUTE)
+get_filename_component(SOURCE_DIR ${PROJECT_DIR}/procrender/src ABSOLUTE)
+get_filename_component(DEPENDENCIES_DIR ${PROJECT_DIR}/dependencies ABSOLUTE)
 
 add_subdirectory(framework)
 

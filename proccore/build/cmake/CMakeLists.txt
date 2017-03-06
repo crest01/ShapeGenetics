@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(gpuproccore)
+project(proccore)
 
 if (NOT DEFINED PROJECT_DIR)
 	get_filename_component(PROJECT_DIR "../../.." ABSOLUTE)
 endif()
 
-set(SOURCE_DIR "${PROJECT_DIR}/gpuproccore_ga/src")
-set(DEPENDENCIES_DIR "${PROJECT_DIR}/gpuproccore_ga/build/dependencies")
+set(SOURCE_DIR "${PROJECT_DIR}/proccore/src")
+set(DEPENDENCIES_DIR "${PROJECT_DIR}/proccore/build/dependencies")
 
 
 
@@ -59,8 +59,8 @@ find_package(Threads REQUIRED)
 
 include_directories( "${include_dirs_INTERNAL}" )
 
-add_library(gpuproccore STATIC ${h_SOURCES} ${cpp_SOURCES} ${glsl_SOURCES} ${cu_SOURCES} ${cuh_SOURCES})
+add_library(proccore STATIC ${h_SOURCES} ${cpp_SOURCES} ${glsl_SOURCES} ${cu_SOURCES} ${cuh_SOURCES})
 
-set(gpuproccore_LIBRARIES gpuproccore ${CMAKE_THREAD_LIBS_INIT} PARENT_SCOPE)
-set(gpuproccore_INCLUDE_DIRS ${include_dirs_INTERNAL} PARENT_SCOPE)
+set(proccore_LIBRARIES proccore ${CMAKE_THREAD_LIBS_INIT} PARENT_SCOPE)
+set(proccore_INCLUDE_DIRS ${include_dirs_INTERNAL} PARENT_SCOPE)
 	

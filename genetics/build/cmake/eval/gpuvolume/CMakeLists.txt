@@ -14,7 +14,7 @@ if (NOT DEFINED Framework_LIBRARIES)
 endif()
 
 
-set(SOURCE_DIR "${PROJECT_DIR}/gpuprocgenetics/eval/gpuvolume")
+set(SOURCE_DIR "${PROJECT_DIR}/genetics/eval/gpuvolume")
 
 
 if (UNIX)
@@ -84,7 +84,7 @@ file(GLOB cpp_SOURCES
 #file(GLOB cuh_SOURCES "${SOURCE_DIR}/*.cuh")
 #file(GLOB cu_SOURCES "${SOURCE_DIR}/*.cu")
 
-include_directories( ${include_dirs_INTERNAL} ${gpuproccore_INCLUDE_DIRS} ${shared_INCLUDE_DIRS} ${Framework_INCLUDE_DIRS})
+include_directories( ${include_dirs_INTERNAL} ${proccore_INCLUDE_DIRS} ${shared_INCLUDE_DIRS} ${Framework_INCLUDE_DIRS})
 
 
 add_library(eval_gpuvolume STATIC ${h_SOURCES} ${cpp_SOURCES} )
