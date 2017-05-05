@@ -19,7 +19,9 @@ The code has been tested on Arch Linux (with clang 3.5.2 or gcc 5.4) and Windows
 
 ## Build
 coming soon in more detail
+
 execute cmake and make in procrender/build/cmake
+
 Adapt some paths in the run/run.py - script
 
 ## Notes
