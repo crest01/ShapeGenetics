@@ -4,7 +4,7 @@
 #include <cassert>
 #include <stdexcept>
 
-#include <win32/window_handle.h>
+#include <win32/error.h>
 
 #include "Win32GLContext.h"
 
@@ -49,10 +49,10 @@ namespace Win32
 			int pf = ChoosePixelFormat(hdc, &pfd);
 
 			if (pf == 0)
-				throw std::runtime_error("ChoosePixelFormat() failed");
+				Win32::throw_last_error();
 
 			if (SetPixelFormat(hdc, pf, nullptr) == FALSE)
-				throw std::runtime_error("SetPixelFormat() failed");
+				Win32::throw_last_error();
 		}
 
 		unique_hglrc createContext(HDC hdc, int version_major, int version_minor, bool debug)
@@ -60,14 +60,15 @@ namespace Win32
 			unique_hglrc dummy_context(wglCreateContext(hdc));
 
 			if (dummy_context == 0)
-				throw std::runtime_error("dummy context creation failed");
+				Win32::throw_last_error();
 
-			wglMakeCurrent(hdc, dummy_context);
+			if (!wglMakeCurrent(hdc, dummy_context))
+				Win32::throw_last_error();
 
 			auto wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
 
 			if (wglCreateContextAttribsARB == nullptr)
-				throw std::runtime_error("wglCreateContextAttribsARB() not supported");
+				Win32::throw_last_error();
 
 
 			static const int attribs[] = {
@@ -81,7 +82,7 @@ namespace Win32
 			unique_hglrc context(wglCreateContextAttribsARB(hdc, 0, attribs));
 
 			if (context == 0)
-				throw std::runtime_error("wglCreateContextAttribsARB() failed");
+				Win32::throw_last_error();
 
 			return context;
 		}

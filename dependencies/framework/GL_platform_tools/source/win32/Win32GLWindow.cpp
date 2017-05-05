@@ -7,7 +7,6 @@
 
 #include <string>
 
-#include <win32/window_handle.h>
 #include <win32/WindowClass.h>
 #include <win32/unicode.h>
 

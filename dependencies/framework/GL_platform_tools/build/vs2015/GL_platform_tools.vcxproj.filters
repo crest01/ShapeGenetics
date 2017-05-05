@@ -115,4 +115,7 @@
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="GL_platform_tools.props" />
+  </ItemGroup>
 </Project>

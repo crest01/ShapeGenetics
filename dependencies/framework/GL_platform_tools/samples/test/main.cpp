@@ -15,7 +15,6 @@
 
 class Renderer : public virtual GL::platform::Renderer
 {
-private:
 	GL::platform::Window window;
 	GL::platform::Context context;
 	GL::platform::context_scope<GL::platform::Window> ctx;

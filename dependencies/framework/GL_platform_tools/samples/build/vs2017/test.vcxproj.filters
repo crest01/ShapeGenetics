@@ -7,19 +7,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\win32\glcore\DllMain.cpp">
+    <ClInclude Include="..\..\test\InputHandler.h">
       <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\win32\glcore\context.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\source\win32\include\win32\glcore.h">
+    <ClCompile Include="..\..\test\main.cpp">
       <Filter>source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\win32\glcore\context.h">
+    </ClCompile>
+    <ClCompile Include="..\..\test\InputHandler.cpp">
       <Filter>source</Filter>
-    </ClInclude>
+    </ClCompile>
   </ItemGroup>
 </Project>

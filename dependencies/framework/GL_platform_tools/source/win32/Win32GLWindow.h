@@ -8,7 +8,7 @@
 
 #include <win32/platform.h>
 #include <win32/error.h>
-#include <win32/window_handle.h>
+#include <win32/window.h>
 
 #include <GL/platform/DisplayHandler.h>
 #include <GL/platform/InputHandler.h>
@@ -28,7 +28,7 @@ namespace Win32
 		class Window
 		{
 			friend class WindowContextScopeState;
-		private:
+
 			unique_hwnd hwnd;
 
 			WINDOWPLACEMENT windowed_placement;
@@ -70,7 +70,6 @@ namespace Win32
 
 		class WindowContextScopeState
 		{
-		private:
 			HWND hwnd;
 
 		protected:

@@ -10,6 +10,7 @@
 #include <memory>
 
 #include <win32/platform.h>
+#include <win32/error.h>
 #include <win32/unique_handle.h>
 #include <win32/glcore.h>
 
@@ -47,7 +48,7 @@ namespace Win32
 		{
 			template <class SurfaceType>
 			friend class context_scope;
-		private:
+
 			unique_hglrc hglrc;
 			unique_glcoreContext ctx;
 
@@ -79,7 +80,6 @@ namespace Win32
 		template <class SurfaceType>
 		class context_scope : private SurfaceTypeTraits<SurfaceType>::ContextScopeState
 		{
-		private:
 			HDC hdc;
 			HGLRC hglrc;
 			const glcoreContext* ctx;
@@ -90,7 +90,8 @@ namespace Win32
 
 			void makeCurrent()
 			{
-				Win32::checkError(wglMakeCurrent(hdc, hglrc) != TRUE);
+				if (wglMakeCurrent(hdc, hglrc) != TRUE)
+					Win32::throw_last_error();
 				glcoreContextMakeCurrent(ctx);
 			}
 
@@ -112,7 +113,8 @@ namespace Win32
 
 			~context_scope()
 			{
-				Win32::checkError(wglMakeCurrent(hdc_restore, hglrc_restore) != TRUE);
+				if (wglMakeCurrent(hdc_restore, hglrc_restore) != TRUE)
+					Win32::throw_last_error();
 				glcoreContextMakeCurrent(ctx_restore);
 				closeHDC(hdc);
 			}

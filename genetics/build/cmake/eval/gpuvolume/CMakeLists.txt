@@ -69,6 +69,15 @@ endif ()
 set(CUDA_NVRTC_LIBRARIES ${CUDA_NVRTC_LIBRARY})
 
 
+# Cuda.lib for the driver interface, since findCUDA.cmake doesn't set it
+if (WIN32)
+	 find_library(CUDA_DRIVER_API_LIBRARY NAMES cuda.lib PATHS "${CUDA_TOOLKIT_ROOT_DIR}/lib/x64/")
+else ()
+	 find_library(CUDA_DRIVER_API_LIBRARY NAMES libcuda.so PATHS "${CUDA_TOOLKIT_ROOT_DIR}/lib64/")
+endif ()
+
+set(CUDA_DRIVER_API_LIBRARIES ${CUDA_DRIVER_API_LIBRARY})
+
 set(include_dirs_INTERNAL 
 	${SOURCE_DIR}
 	)
@@ -91,7 +100,7 @@ add_library(eval_gpuvolume STATIC ${h_SOURCES} ${cpp_SOURCES} )
 #CUDA_ADD_LIBRARY(eval_gpuvolume_cuda STATIC ${cu_SOURCES} ${cuh_SOURCES})
 
 #set(eval_gpuvolume_LIBRARIES eval_gpuvolume eval_gpuvolume_cuda ${shared_LIBRARIES} PARENT_SCOPE)
-set(eval_gpuvolume_LIBRARIES eval_gpuvolume ${shared_LIBRARIES} ${Framework_LIBRARIES} ${CUDA_NVRTC_LIBRARIES} PARENT_SCOPE)
+set(eval_gpuvolume_LIBRARIES eval_gpuvolume ${shared_LIBRARIES} ${Framework_LIBRARIES} ${CUDA_NVRTC_LIBRARIES} ${CUDA_DRIVER_API_LIBRARIES} PARENT_SCOPE)
 set(eval_gpuvolume_INCLUDE_DIRS ${include_dirs_INTERNAL} PARENT_SCOPE)
 
 

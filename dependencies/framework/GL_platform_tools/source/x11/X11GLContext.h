@@ -123,7 +123,7 @@ namespace X11
 
 			void setSwapInterval(int interval)
 			{
-				//glXSwapIntervalEXT(display, drawable, interval);
+				glXSwapIntervalEXT(display, drawable, interval);
 			}
 
 			void swapBuffers()

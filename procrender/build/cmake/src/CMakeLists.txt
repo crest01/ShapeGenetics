@@ -18,4 +18,4 @@ message(STATUS "cmake/src: Framework libs: ${Framework_LIBRARIES}")
 message(STATUS "cmake/src: genetic libs: ${genetics_LIBRARIES}")
 
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_shaders ${Framework_LIBRARIES} ${genetics_LIBRARIES} ${proccore_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} ${eval_LIBRARIES} nvcuda)
+target_link_libraries(${PROJECT_NAME} ${eval_LIBRARIES})
