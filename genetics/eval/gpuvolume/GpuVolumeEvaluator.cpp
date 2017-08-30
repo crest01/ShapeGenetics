@@ -231,7 +231,7 @@ void GpuVolumeEvaluator::init(ProceduralAlgorithm* base)
 	_geometry = _base->get<GeometryConf*>("geometry");
 	_population = _base->get<PopulationConf*>("population");
 
-	std::string source_folder("FIXME/genetics/eval/gpuvolume/nvrtc_filesC:/ProcGen/gpuprocgenetics/run/nvrtc_files/");
+	std::string source_folder("FIXME/genetics/eval/gpuvolume/nvrtc_files");
 	std::string source;
 	std::string source_file("VolumeEvaluator.cu");
 	std::string header_file("combined_header.cuh");
