@@ -32,3 +32,5 @@ The gcc-version shipped with Arch Linux wasn't compatible with CUDA 8.0, and CUD
 
 On Windows i had to use the nvrtc-package, since CUDA didn't support VS2015, and VS2014 didn't support C++11.
 
+Futhermore on some versions of MSVC compile-time floating point operations sometimes fail: setting the floating point model to /fp:strict for at least the genetics_grammar - project solved the issue for me.
+
