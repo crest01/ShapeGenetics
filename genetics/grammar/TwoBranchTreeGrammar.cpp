@@ -53,13 +53,13 @@ void TwoBranchTreeGrammar::initSymbols(SymbolManager& sm)
 	sm.addParameter<math::float3>(Trunk, "size", math::float3(0.8f, 1.4f, 0.8f), math::float3(0.8f, 1.8f, 0.8f));
 
 	Branch1 = sm.createTerminal("b");
-	sm.addParameter<math::float3>(Branch1, "branch_size", math::float3(0.6, 0.6, 0.6f), math::float3(0.7, 0.801f, 0.7f));
+	sm.addParameter<math::float3>(Branch1, "branch_size", math::float3(0.6f, 0.6f, 0.6f), math::float3(0.7f, 0.801f, 0.7f));
 	sm.addParameter<float>(Branch1, "rotate_y", 0.0f, 180.0f);
 	sm.addParameter<float>(Branch1, "branch_rotate_z", 35.0f, 85.0f);
 	sm.addParameter<float>(Branch1, "branch_rotate_y", -3.0f, 3.0f);
 
 	Branch2 = sm.createTerminal("n");
-	sm.addParameter<math::float3>(Branch2, "branch_size", math::float3(0.6, 0.6, 0.6f), math::float3(0.7, 0.801f, 0.7f));
+	sm.addParameter<math::float3>(Branch2, "branch_size", math::float3(0.6f, 0.6f, 0.6f), math::float3(0.7f, 0.801f, 0.7f));
 	sm.addParameter<float>(Branch2, "rotate_y", 180.0f, 360.0f);
 	sm.addParameter<float>(Branch2, "branch_rotate_z", 35.0f, 85.0f);
 	sm.addParameter<float>(Branch2, "branch_rotate_y", -3.0f, 3.0f);
@@ -190,7 +190,7 @@ void TwoBranchTreeGrammar::createAxiom(PGG::CPU::GrammarSystem& system, const in
 		Resize<DynamicFloat3<0, ParamLayer>,
 			Duplicate<
 				DirectCall<GenerateTree>,
-				DirectCall<Translate< Vec< StaticFloat<0.0_p>, Mul < StaticFloat<0.0_p>, ShapeSizeAxis<Axes::YAxis> >, StaticFloat<0.0_p> >,
+				DirectCall<Translate< VecEx<math::float3, StaticFloat<0.0_p>, Mul < StaticFloat<0.0_p>, ShapeSizeAxis<Axes::YAxis> >, StaticFloat<0.0_p> >,
 				StaticCall<BranchRecursionFromTrunk>
 			  >
 			>
@@ -239,12 +239,12 @@ void TwoBranchTreeGrammar::createAxiom(PGG::CPU::GrammarSystem& system, const in
 	class GenerateBranchRule : public
 	// --------------------------------------- first branch:  ------------------
 	Rotate<StaticAxes<Axes::YAxis>, DynamicFloat<0, ParamLayer>,
-	DirectCall<Translate< Vec< StaticFloat<0.0_p>, Mul< StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis> >, StaticFloat<0.0_p> >,
+	DirectCall<Translate< VecEx<math::float3, StaticFloat<0.0_p>, Mul< StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis> >, StaticFloat<0.0_p> >,
 	      DirectCall<Rotate<StaticAxes<Axes::ZAxis>, DynamicFloat<1, ParamLayer>,
-	            DirectCall<Translate<Vec< StaticFloat<0.0_p>, Mul< StaticFloat<0.0_p>, ShapeSizeAxis<Axes::YAxis> >, StaticFloat<0.0_p> >,
+	            DirectCall<Translate<VecEx<math::float3, StaticFloat<0.0_p>, Mul< StaticFloat<0.0_p>, ShapeSizeAxis<Axes::YAxis> >, StaticFloat<0.0_p> >,
 	            	DirectCall<Resize<DynamicFloat3<4, ParamLayer>,
-	            //DirectCall<Resize<Vec< StaticFloat<0.7_p>, StaticFloat<0.8_p>, StaticFloat<0.7_p> >,
-	            		DirectCall< Translate< Vec< StaticFloat<0.0_p>, Mul< StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis> >, StaticFloat<0.0_p> >,
+	            //DirectCall<Resize<VecEx<math::float3, StaticFloat<0.7_p>, StaticFloat<0.8_p>, StaticFloat<0.7_p> >,
+	            		DirectCall< Translate< VecEx<math::float3, StaticFloat<0.0_p>, Mul< StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis> >, StaticFloat<0.0_p> >,
 	            			DirectCall<Rotate<StaticAxes<Axes::YAxis>, DynamicFloat<7, ParamLayer>,
 	            				Duplicate< StaticCall<GenerateTree>, StaticCall<BranchRecursion> >
 							> >
@@ -258,7 +258,7 @@ void TwoBranchTreeGrammar::createAxiom(PGG::CPU::GrammarSystem& system, const in
 
 	class GenerateLeafRule : public
 	// --------------------------------------- first branch:  ------------------
-	Translate< Vec< StaticFloat<0.0_p>, Mul< StaticFloat<0.75_p>, ShapeSizeAxis<Axes::YAxis> >, StaticFloat<0.0_p> >,
+	Translate< VecEx<math::float3, StaticFloat<0.0_p>, Mul< StaticFloat<0.75_p>, ShapeSizeAxis<Axes::YAxis> >, StaticFloat<0.0_p> >,
      	 DirectCall<GenerateLeaf> >
 	{};
 

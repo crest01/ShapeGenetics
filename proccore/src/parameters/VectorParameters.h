@@ -41,9 +41,9 @@ namespace PGG
 			template<> struct ChooseVecC<unsigned int, 4> { typedef math::uint4 Type; };
 			template<> struct ChooseVecC<float, 4> { typedef math::float4 Type; };
 
-			template<class TShape, class TScope, class ... Ts>
+//			template<class TShape, class TScope, class ... Ts>
 //			using ChooseVec = ChooseVecT<decltype(Ts::eval(declval<Scope::ScopedShape<TShape, TScope>>())) ...>;
-			using ChooseVec = ChooseVecT<decltype(Ts::eval(declval<Scope::ScopedShape<TShape, TScope>&>()))...>;
+//			using ChooseVec = ChooseVecT<decltype(Ts::eval(declval<Scope::ScopedShape<TShape, TScope>&>()))...>;
 
 			template<class ... Ts>
 			class ChooseMatT;
@@ -69,8 +69,8 @@ namespace PGG
 			template<> struct ChooseMatC<float, 3, 4> { typedef math::float3x4 Type; };
 			template<> struct ChooseMatC<float, 4, 4> { typedef math::float4x4 Type; };
 
-			template<class TShape, class TScope, class ... Ts>
-			using ChooseMat = ChooseMatT<decltype(Ts::eval(declval<Scope::ScopedShape<TShape, TScope>&>()))...>;
+			//template<class TShape, class TScope, class ... Ts>
+			//using ChooseMat = ChooseMatT<decltype(Ts::eval(declval<Scope::ScopedShape<TShape, TScope>&>()))...>;
 		}
 
 		template<class TVec, class ... Ts>
@@ -82,23 +82,23 @@ namespace PGG
 			DUAL_BUILD_FUNCTION static TVec eval(Scope::ScopedShape<TShape, TScope> & scopedShape) { return TVec(Ts::eval(scopedShape)...); }
 		};
 
-		template<class ... Ts>
-		struct Vec
-		{
-			template<class TShape, class TScope>
-			DUAL_BUILD_FUNCTION static typename ChooseVec<TShape, TScope, Ts...>::Type eval(const Scope::ScopedShape<TShape, TScope> & scopedShape)
-			{
-				//return typename ChooseVec<TShape, TScope, Ts...>::Type( 0.0f );
-				return typename ChooseVec<TShape, TScope, Ts...>::Type(Ts::eval(scopedShape)...);
-			}
-			template<class TShape, class TScope>
-			DUAL_BUILD_FUNCTION static typename ChooseVec<TShape, TScope, Ts...>::Type eval(Scope::ScopedShape<TShape, TScope> & scopedShape)
-			{
-				//return typename ChooseVec<TShape, TScope, Ts...>::Type( 0.0f );
-				return typename ChooseVec<TShape, TScope, Ts...>::Type(Ts::eval(scopedShape)...);
-			}
+		//template<class ... Ts>
+		//struct Vec
+		//{
+		//	template<class TShape, class TScope>
+		//	DUAL_BUILD_FUNCTION static typename ChooseVec<TShape, TScope, Ts...>::Type eval(const Scope::ScopedShape<TShape, TScope> & scopedShape)
+		//	{
+		//		//return typename ChooseVec<TShape, TScope, Ts...>::Type( 0.0f );
+		//		return typename ChooseVec<TShape, TScope, Ts...>::Type(Ts::eval(scopedShape)...);
+		//	}
+		//	template<class TShape, class TScope>
+		//	DUAL_BUILD_FUNCTION static typename ChooseVec<TShape, TScope, Ts...>::Type eval(Scope::ScopedShape<TShape, TScope> & scopedShape)
+		//	{
+		//		//return typename ChooseVec<TShape, TScope, Ts...>::Type( 0.0f );
+		//		return typename ChooseVec<TShape, TScope, Ts...>::Type(Ts::eval(scopedShape)...);
+		//	}
 
-		};
+		//};
 
 		template<class TMat, class ... Ts>
 		struct MatEx
@@ -110,16 +110,16 @@ namespace PGG
 			DUAL_BUILD_FUNCTION static TMat eval(Scope::ScopedShape<TShape, TScope> & scopedShape) { return TMat(Ts::eval(scopedShape)...); }
 		};
 
-		template<class ... Ts>
-		struct Mat
-		{
-			template<class TShape, class TScope>
-			DUAL_BUILD_FUNCTION static typename ChooseMat<TShape, TScope, Ts...>::Type eval(const Scope::ScopedShape<TShape, TScope> & scopedShape) { return typename ChooseMat<TShape, TScope, Ts...>::Type(Ts::eval(scopedShape)...); }
+		//template<class ... Ts>
+		//struct Mat
+		//{
+		//	template<class TShape, class TScope>
+		//	DUAL_BUILD_FUNCTION static typename ChooseMat<TShape, TScope, Ts...>::Type eval(const Scope::ScopedShape<TShape, TScope> & scopedShape) { return typename ChooseMat<TShape, TScope, Ts...>::Type(Ts::eval(scopedShape)...); }
 
-			template<class TShape, class TScope>
-			DUAL_BUILD_FUNCTION static typename ChooseMat<TShape, TScope, Ts...>::Type eval(Scope::ScopedShape<TShape, TScope> & scopedShape) { return typename ChooseMat<TShape, TScope, Ts...>::Type(Ts::eval(scopedShape)...); }
+		//	template<class TShape, class TScope>
+		//	DUAL_BUILD_FUNCTION static typename ChooseMat<TShape, TScope, Ts...>::Type eval(Scope::ScopedShape<TShape, TScope> & scopedShape) { return typename ChooseMat<TShape, TScope, Ts...>::Type(Ts::eval(scopedShape)...); }
 
-		};
+		//};
 	}
 }
 

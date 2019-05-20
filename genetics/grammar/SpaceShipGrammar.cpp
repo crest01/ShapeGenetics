@@ -50,15 +50,15 @@ void SpaceShipGrammar::initSymbols(SymbolManager& sm)
 
 	// Body element
 	B = sm.createTerminal("B");
-	sm.addParameter<math::float3>(B, "size", math::float3(0.6, 0.6f, 0.6f), math::float3(1.5f, 1.5f, 1.5f));
+	sm.addParameter<math::float3>(B, "size", math::float3(0.6f, 0.6f, 0.6f), math::float3(1.5f, 1.5f, 1.5f));
 
 	// Top (pyramid) element on top of body
 	T_start = sm.createTerminal("T");
-	sm.addParameter<math::float3>(T_start, "size", math::float3(0.3, 0.1f, 0.3f), math::float3(0.8f, 0.2f, 0.8f));
+	sm.addParameter<math::float3>(T_start, "size", math::float3(0.3f, 0.1f, 0.3f), math::float3(0.8f, 0.2f, 0.8f));
 
 	// Top (pyramid) element on top of body
 	T_recursion = sm.createTerminal("t");
-	sm.addParameter<math::float3>(T_recursion, "size", math::float3(0.6, 0.8f, 0.6f), math::float3(1.1f, 1.1f, 1.1f));
+	sm.addParameter<math::float3>(T_recursion, "size", math::float3(0.6f, 0.8f, 0.6f), math::float3(1.1f, 1.1f, 1.1f));
 
 	// Wing element
 	W_start = sm.createTerminal("W");
@@ -232,26 +232,26 @@ void SpaceShipGrammar::createAxiom(PGG::CPU::GrammarSystem& system, const int ax
 	// offset 8: int to change paramtable for wings (equal for both)
 
 	class BodyRule : public
-		Translate<Vec<StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >, //0 is starting point, so move the box half the size to the front
+		Translate<VecEx<math::float3, StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >, //0 is starting point, so move the box half the size to the front
 			StaticCall <
 				Duplicate <
 					DirectCall<MyGenerate>, // body part is being generated
 					DirectCall <
 						ChoosePath < DynamicInt<3, ParamLayer>, // extend body part
-						DirectCall<Translate<Vec<StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >,
+						DirectCall<Translate<VecEx<math::float3, StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >,
 							SetScopeAttachment<ParamLayer, DynamicInt<4, ParamLayer>, StaticCall<BodyRuleRecusion> > > > > // next body part
 					>,
 					DirectCall<
 						ChoosePath < DynamicInt<5, ParamLayer>, // build top part
-						DirectCall<Translate<Vec<StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p>>,
+						DirectCall<Translate<VecEx<math::float3, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p>>,
 							SetScopeAttachment<ParamLayer, DynamicInt<6, ParamLayer>, StaticCall<TopRule> > > > > // start top
 					>,
 					DirectCall<
 						ChoosePath < DynamicInt<7, ParamLayer>, //generate wings
 							SetScopeAttachment<ParamLayer, DynamicInt<8, ParamLayer>,
 							DirectCall< Duplicate < // mirror
-								DirectCall<Translate<Vec< Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > >, // wing right
-								DirectCall<Rotate<StaticAxes<Axes::ZAxis>, StaticFloat<3.14159265359_p>, DirectCall<Translate<Vec<Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > > > > >// wing left
+								DirectCall<Translate<VecEx<math::float3, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > >, // wing right
+								DirectCall<Rotate<StaticAxes<Axes::ZAxis>, StaticFloat<3.14159265359_p>, DirectCall<Translate<VecEx<math::float3, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > > > > >// wing left
 						> > >
 					>
 				>
@@ -276,12 +276,12 @@ void SpaceShipGrammar::createAxiom(PGG::CPU::GrammarSystem& system, const int ax
 	// offset 3: int 1/0 to enable next top part
 	// offset 4: int to change paramtable for next top part
 	class TopRuleRecursion : public
-		Translate<Vec<StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
+		Translate< VecEx<math::float3, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
 			Duplicate <
 				DirectCall<MyGenerate>, // top part is being generated
 				DirectCall<ChoosePath<
 					DynamicInt<3, ParamLayer>,
-						DirectCall< Translate<Vec<StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >,
+						DirectCall< Translate< VecEx<math::float3, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >,
 							SetScopeAttachment<ParamLayer, DynamicInt<4, ParamLayer>,
 								DirectCall< Resize<DynamicFloat3<0, ParamLayer>, DirectCall<TopRuleRecursion>
 										>
@@ -299,7 +299,7 @@ void SpaceShipGrammar::createAxiom(PGG::CPU::GrammarSystem& system, const int ax
 	// offset 3: float forward backward move
 	class WingRule : public
 		Resize<DynamicFloat3<0, ParamLayer>, // initial wing scale
-			DirectCall<Translate<Vec<StaticFloat<0_p>, StaticFloat<0_p>, Mul<ShapeSizeAxis<Axes::ZAxis>, DynamicFloat<3, ParamLayer>>>,
+			DirectCall<Translate<VecEx<math::float3, StaticFloat<0_p>, StaticFloat<0_p>, Mul<ShapeSizeAxis<Axes::ZAxis>, DynamicFloat<3, ParamLayer>>>,
 				DirectCall<WingRuleRecursion >
 			> >
 		>
@@ -308,15 +308,15 @@ void SpaceShipGrammar::createAxiom(PGG::CPU::GrammarSystem& system, const int ax
 	// offset 4: int 1/0 to enable next wing part
 	// offset 5: int to change paramtable for next top part
 	class WingRuleRecursion : public
-		Translate<Vec<Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
+		Translate< VecEx<math::float3, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
 			Duplicate <
 				DirectCall<MyGenerate>, // wing part is being generated
 				DirectCall<ChoosePath<
 						DynamicInt<4, ParamLayer>,
-							DirectCall< Translate<Vec<Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >,
+							DirectCall< Translate< VecEx<math::float3, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >,
 								SetScopeAttachment<ParamLayer, DynamicInt<5, ParamLayer>,
 									DirectCall< Resize<DynamicFloat3<0, ParamLayer>,
-											DirectCall<Translate<Vec<StaticFloat<0_p>, StaticFloat<0_p>, Mul<ShapeSizeAxis<Axes::ZAxis>, DynamicFloat<3, ParamLayer>>>, // backward and forward move
+											DirectCall<Translate<VecEx<math::float3, StaticFloat<0_p>, StaticFloat<0_p>, Mul<ShapeSizeAxis<Axes::ZAxis>, DynamicFloat<3, ParamLayer>>>, // backward and forward move
 												DirectCall<WingRuleRecursion>
 											> >
 										>

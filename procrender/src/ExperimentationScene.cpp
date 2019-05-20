@@ -74,13 +74,13 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 	typedef Operators::Resize<Parameters::StaticFloat2<4_p, 2_p>, Modifiers::DirectCall<
 		Operators::Repeat<Parameters::StaticAxes<Parameters::Axes::XAxis>, Parameters::StaticFloat<1.0_p>, Modifiers::DirectCall<
 		StaticGenerate> > > > ScaleRepGen;
-	//StaticRandFloat<1_p, 6_p> // Vec<StaticFloat<4_p>, StaticFloat<4_p>>
+	//StaticRandFloat<1_p, 6_p> // VecEx<math::float3,StaticFloat<4_p>, StaticFloat<4_p>>
 
 	typedef RandomPath<0,
 		StaticFloat<0.5_p>, DirectCall<StaticGenerate>,
-		StaticFloat<0.5_p>, DirectCall<Extrude<StaticFloat<-1.0_p>, DirectCall< Resize< Vec<StaticFloat<1.0_p>, StaticRandFloat<0_p, 1_p>, StaticFloat<1.0_p>>, DirectCall<StaticGenerate> > >
+		StaticFloat<0.5_p>, DirectCall<Extrude<StaticFloat<-1.0_p>, DirectCall< Resize< VecEx<math::float3,StaticFloat<1.0_p>, StaticRandFloat<0_p, 1_p>, StaticFloat<1.0_p>>, DirectCall<StaticGenerate> > >
 		> > > RandomExtrude;
-	typedef Resize<Vec<StaticRandFloat<1_p, 6_p>, StaticFloat<4_p>>, DirectCall<
+	typedef Resize<VecEx<math::float3,StaticRandFloat<1_p, 6_p>, StaticFloat<4_p>>, DirectCall<
 		Subdiv<StaticAxes<Axes::XAxis>,
 			StaticFloat<1._r>, Reseed<0, StaticCall<RandomExtrude> >,
 			StaticFloat<1._r>, DirectCall<StaticGenerate>,
@@ -114,27 +114,27 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 	ScopedShape<Box, SpaceShipscope > spaceShipAxiom(Box(math::float3(1.0f)), SpaceShipscope(math::identity<math::float3x4>(), seed, 0));
 
 	class SpaceShip : public
-		Resize<Vec<StaticRandFloat<0.8_p, 1.3_p>, StaticRandFloat<0.4_p, 0.8_p>, StaticRandFloat<0.8_p, 1.3_p>>, DirectCall<BodyRule> >
+		Resize<VecEx<math::float3,StaticRandFloat<0.8_p, 1.3_p>, StaticRandFloat<0.4_p, 0.8_p>, StaticRandFloat<0.8_p, 1.3_p>>, DirectCall<BodyRule> >
 	{ };
 
 	class BodyRule : public
-		Translate<Vec<StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >, //0 is starting point, so move the box half the size to the front
+		Translate<VecEx<math::float3,StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >, //0 is starting point, so move the box half the size to the front
 			StaticCall <
 				Duplicate <
 					DirectCall<MyGenerate>, // body part is being generated
 					DirectCall < RandomPath < 0,
 						StaticFloat<1_p>, DirectCall<Discard>, // does not extend to the front
-						StaticFloat<2_p>, DirectCall<Translate<Vec<StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >, StaticCall<BodyRuleRecusion> > > > // next body part
+						StaticFloat<2_p>, DirectCall<Translate<VecEx<math::float3,StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >, StaticCall<BodyRuleRecusion> > > > // next body part
 					>,
 					DirectCall<RandomPath<0,
 						StaticFloat<1_p>, DirectCall<Discard>, // does not extend to the top
-						StaticFloat<1_p>, DirectCall<Translate<Vec<StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p>>, StaticCall<TopRule> > > > // start top 
+						StaticFloat<1_p>, DirectCall<Translate<VecEx<math::float3,StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p>>, StaticCall<TopRule> > > > // start top 
 					>,  
 					DirectCall<RandomPath<0,
 						StaticFloat<1_p>, DirectCall<Discard>, // does not generate wings
 						StaticFloat<1_p>, Duplicate < // mirror
-							DirectCall<Translate<Vec< Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > >, // wing right
-							DirectCall<Rotate<StaticAxes<Axes::ZAxis>, StaticFloat<3.14159265359_p>, DirectCall<Translate<Vec<Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > > > > >// wing left
+							DirectCall<Translate<VecEx<math::float3, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > >, // wing right
+							DirectCall<Rotate<StaticAxes<Axes::ZAxis>, StaticFloat<3.14159265359_p>, DirectCall<Translate<VecEx<math::float3,Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > > > > >// wing left
 						>
 					>
 				>
@@ -145,7 +145,7 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 	class BodyRuleRecusion : public
 		ChoosePath<
 			ScopeParamLT<1, StaticInt<5>>, DirectCall< //max body parts
-				Resize<Vec<StaticRandFloat<0.5_p, 1.2_p>, StaticRandFloat<0.5_p, 1.2_p>, StaticRandFloat<0.5_p, 1.5_p>>,  //adjust body part size
+				Resize<VecEx<math::float3,StaticRandFloat<0.5_p, 1.2_p>, StaticRandFloat<0.5_p, 1.2_p>, StaticRandFloat<0.5_p, 1.5_p>>,  //adjust body part size
 					IncreaseScopeAttachment<1, StaticInt<1>, //increase recursion counter
 						DirectCall<BodyRule> // execute the recursion
 					>
@@ -155,7 +155,7 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 
 
 	class TopRule : public
-		Resize<Vec<StaticRandFloat<0.3_p, 0.8_p>, StaticRandFloat<0.1_p, 0.2_p>, StaticRandFloat<0.3_p, 0.8_p>>, // initial top scale
+		Resize<VecEx<math::float3,StaticRandFloat<0.3_p, 0.8_p>, StaticRandFloat<0.1_p, 0.2_p>, StaticRandFloat<0.3_p, 0.8_p>>, // initial top scale
 			SetScopeAttachment<1, StaticInt<1>, // set recursion counter to 1
 				DirectCall<TopRuleRecursion >
 			>
@@ -163,7 +163,7 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 	{};
 
 	class TopRuleRecursion : public
-		Translate<Vec<StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
+		Translate<VecEx<math::float3,StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
 			Duplicate <
 				DirectCall<MyGenerate>, // top part is being generated
 				DirectCall<ChoosePath<
@@ -171,8 +171,8 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 							DirectCall< RandomPath<0,
 								StaticFloat<1_p>, DirectCall<Discard>, // does not extend to the top
 								StaticFloat<1_p>, DirectCall<
-									Translate<Vec<StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >,
-										Resize<Vec<StaticRandFloat<0.6_p, 0.9_p>, StaticRandFloat<0.8_p, 1.1_p>, StaticRandFloat<0.6_p, 0.9_p>>,
+									Translate<VecEx<math::float3,StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >,
+										Resize<VecEx<math::float3,StaticRandFloat<0.6_p, 0.9_p>, StaticRandFloat<0.8_p, 1.1_p>, StaticRandFloat<0.6_p, 0.9_p>>,
 											DirectCall<TopRuleRecursion>
 										>
 									>
@@ -185,7 +185,7 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 	{};
 
 	class WingRule : public
-		Resize<Vec<StaticRandFloat<0.3_p, 1.2_p>, StaticRandFloat<0.2_p, 0.5_p>, StaticRandFloat<0.2_p, 1.0_p>>, // initial wing scale
+		Resize<VecEx<math::float3,StaticRandFloat<0.3_p, 1.2_p>, StaticRandFloat<0.2_p, 0.5_p>, StaticRandFloat<0.2_p, 1.0_p>>, // initial wing scale
 			SetScopeAttachment<1, StaticInt<1>, // set recursion counter to 1
 				DirectCall<WingRuleRecursion >
 			>
@@ -193,7 +193,7 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 	{};
 
 	class WingRuleRecursion : public
-		Translate<Vec<Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
+		Translate<VecEx<math::float3,Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
 			Duplicate <
 				DirectCall<MyGenerate>, // wing part is being generated
 				DirectCall<ChoosePath<
@@ -201,9 +201,9 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 							DirectCall< RandomPath<0,
 								StaticFloat<1_p>, DirectCall<Discard>, // does not extend further
 								StaticFloat<5_p>, DirectCall<
-									Translate<Vec<Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >,
-										Resize<Vec<StaticRandFloat<0.6_p, 1.2_p>, StaticRandFloat<0.9_p, 1.1_p>, StaticRandFloat<0.7_p, 1.2_p>>,
-											DirectCall<Translate<Vec<StaticFloat<0_p>, StaticFloat<0_p>, Mul<ShapeSizeAxis<Axes::ZAxis>, StaticRandFloat<-0.5_p, 0.5_p>>>, // backward and forward move
+									Translate<VecEx<math::float3,Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >,
+										Resize<VecEx<math::float3,StaticRandFloat<0.6_p, 1.2_p>, StaticRandFloat<0.9_p, 1.1_p>, StaticRandFloat<0.7_p, 1.2_p>>,
+											DirectCall<Translate<VecEx<math::float3,StaticFloat<0_p>, StaticFloat<0_p>, Mul<ShapeSizeAxis<Axes::ZAxis>, StaticRandFloat<-0.5_p, 0.5_p>>>, // backward and forward move
 												DirectCall<WingRuleRecursion>
 											> >
 										>
@@ -236,26 +236,26 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 	// offset 8: int to change paramtable for wings (equal for both)
 
 	class BodyRule : public
-		Translate<Vec<StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >, //0 is starting point, so move the box half the size to the front
+		Translate<VecEx<math::float3,StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >, //0 is starting point, so move the box half the size to the front
 			StaticCall <
 				Duplicate <
 					DirectCall<MyGenerate>, // body part is being generated
 					DirectCall < 
 						ChoosePath < DynamicInt<3, ParamLayer>, // extend body part
-						DirectCall<Translate<Vec<StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >,
+						DirectCall<Translate<VecEx<math::float3,StaticFloat<0_p>, StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::ZAxis>> >,
 							SetScopeAttachment<ParamLayer, DynamicInt<4, ParamLayer>, StaticCall<BodyRuleRecusion> > > > > // next body part
 					>,
 					DirectCall<
 						ChoosePath < DynamicInt<5, ParamLayer>, // build top part
-						DirectCall<Translate<Vec<StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p>>, 
+						DirectCall<Translate<VecEx<math::float3,StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p>>, 
 							SetScopeAttachment<ParamLayer, DynamicInt<6, ParamLayer>, StaticCall<TopRule> > > > > // start top 
 					>,
 					DirectCall<
 						ChoosePath < DynamicInt<7, ParamLayer>, //generate wings
 							SetScopeAttachment<ParamLayer, DynamicInt<8, ParamLayer>,
 							DirectCall< Duplicate < // mirror
-								DirectCall<Translate<Vec< Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > >, // wing right
-								DirectCall<Rotate<StaticAxes<Axes::ZAxis>, StaticFloat<3.14159265359_p>, DirectCall<Translate<Vec<Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > > > > >// wing left
+								DirectCall<Translate<VecEx<math::float3, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > >, // wing right
+								DirectCall<Rotate<StaticAxes<Axes::ZAxis>, StaticFloat<3.14159265359_p>, DirectCall<Translate<VecEx<math::float3,Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis> >, StaticFloat<0_p>, StaticFloat<0_p>>, StaticCall<WingRule> > > > > >// wing left
 						> > >
 					>
 				>
@@ -280,12 +280,12 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 	// offset 3: int 1/0 to enable next top part
 	// offset 4: int to change paramtable for next top part
 	class TopRuleRecursion : public
-		Translate<Vec<StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
+		Translate<VecEx<math::float3,StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
 			Duplicate <
 				DirectCall<MyGenerate>, // top part is being generated
 				DirectCall<ChoosePath< 
 					DynamicInt<3, ParamLayer>, 
-						DirectCall< Translate<Vec<StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >,
+						DirectCall< Translate<VecEx<math::float3,StaticFloat<0_p>, Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::YAxis>>, StaticFloat<0_p> >,
 							SetScopeAttachment<ParamLayer, DynamicInt<4, ParamLayer>,
 								DirectCall< Resize<DynamicFloat3<0, ParamLayer>, DirectCall<TopRuleRecursion>
 										>
@@ -303,7 +303,7 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 	// offset 3: float forward backward move
 	class WingRule : public
 		Resize<DynamicFloat3<0, ParamLayer>, // initial wing scale
-			DirectCall<Translate<Vec<StaticFloat<0_p>, StaticFloat<0_p>, Mul<ShapeSizeAxis<Axes::ZAxis>, DynamicFloat<3, ParamLayer>>>,
+			DirectCall<Translate<VecEx<math::float3,StaticFloat<0_p>, StaticFloat<0_p>, Mul<ShapeSizeAxis<Axes::ZAxis>, DynamicFloat<3, ParamLayer>>>,
 				DirectCall<WingRuleRecursion >
 			> >
 		>
@@ -312,15 +312,15 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 	// offset 4: int 1/0 to enable next wing part
 	// offset 5: int to change paramtable for next top part
 	class WingRuleRecursion : public
-		Translate<Vec<Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
+		Translate<VecEx<math::float3,Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >, //0 is starting point, so move the box half the size up
 			Duplicate <
 				DirectCall<MyGenerate>, // wing part is being generated
 				DirectCall<ChoosePath<
 						DynamicInt<4, ParamLayer>, 
-							DirectCall< Translate<Vec<Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >,
+							DirectCall< Translate<VecEx<math::float3,Mul<StaticFloat<0.5_p>, ShapeSizeAxis<Axes::XAxis>>, StaticFloat<0_p>, StaticFloat<0_p> >,
 								SetScopeAttachment<ParamLayer, DynamicInt<5, ParamLayer>,
 									DirectCall< Resize<DynamicFloat3<0, ParamLayer>, 
-											DirectCall<Translate<Vec<StaticFloat<0_p>, StaticFloat<0_p>, Mul<ShapeSizeAxis<Axes::ZAxis>, DynamicFloat<3, ParamLayer>>>, // backward and forward move
+											DirectCall<Translate<VecEx<math::float3,StaticFloat<0_p>, StaticFloat<0_p>, Mul<ShapeSizeAxis<Axes::ZAxis>, DynamicFloat<3, ParamLayer>>>, // backward and forward move
 												DirectCall<WingRuleRecursion>
 											> >
 										>
@@ -362,7 +362,7 @@ double ExperimentationScene::generate(std::vector<PGA::GeneratedVertex>& geometr
 
 	system.addAxiom<SpaceShip>(spaceShipAxiom);
 #endif
-	//DirectCall< Resize<Vec<StaticRandFloat<1_p, 6_p>, StaticRandFloat<1_p, 6_p>, StaticRandFloat<1_p, 6_p>>
+	//DirectCall< Resize<VecEx<math::float3,StaticRandFloat<1_p, 6_p>, StaticRandFloat<1_p, 6_p>, StaticRandFloat<1_p, 6_p>>
 	
 	auto t0 = std::chrono::high_resolution_clock::now();
 	system.run(8);
